@@ -8,5 +8,5 @@ wandb/
 *.ckpt
 *.wav
 .hf_home/
-.numba_cache/
+.numba_cache/g
 tears_audio/
