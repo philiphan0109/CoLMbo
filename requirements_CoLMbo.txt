@@ -1,6 +1,6 @@
 datasets==3.2.0
 huggingface_hub==0.27.1
-importlib_resources==5.12.0
+# importlib_resources==5.12.0
 importlib_resources==6.4.0
 librosa==0.10.0.post2
 matplotlib==3.10.5

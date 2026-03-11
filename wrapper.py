@@ -45,6 +45,16 @@ class ExpWrapper():
         self.tokenizer = AutoTokenizer.from_pretrained(config_wrapper['text_decoder'])
         self.tokenizer.add_special_tokens({'pad_token': '!'})
 
+    def _map_location(self):
+        if isinstance(self.gpu_id, str):
+            if self.gpu_id == "cpu":
+                return "cpu"
+            if self.gpu_id.startswith("cuda"):
+                return self.gpu_id
+        if isinstance(self.gpu_id, int) and torch.cuda.is_available():
+            return f"cuda:{self.gpu_id}"
+        return "cpu"
+
     def init_mapper(self):
         self.sid_mapper = DDP(self.sid_mapper, device_ids=[self.gpu_id], find_unused_parameters=True)
 
@@ -119,7 +129,7 @@ class ExpWrapper():
         return model
 
     def load_sid_model(self, sid_model, snapshot_path, sid_ck_name):
-        loc = f"cuda:{self.gpu_id}"
+        loc = self._map_location()
         sid_model_path = f"{snapshot_path}/{sid_ck_name}"
         snapshot = torch.load(sid_model_path, map_location=loc)
         sid_model = self.load_model(snapshot["sid_model"], sid_model)
@@ -127,7 +137,7 @@ class ExpWrapper():
         epochs_run = snapshot["epochs_run"]
 
     def load_mapper(self, snapshot_path, mapper_ck_name):
-        loc = f"cuda:{self.gpu_id}"
+        loc = self._map_location()
         mapper_path = sorted(glob(f"{snapshot_path}/mapper_*.pt"))[-1]
         mapper_path = f"{snapshot_path}/{mapper_ck_name}"
         snapshot = torch.load(mapper_path, map_location=loc)
@@ -270,4 +280,3 @@ class ExpWrapper():
         return output_texts
         # return output_texts, token_list, text_list
     
-

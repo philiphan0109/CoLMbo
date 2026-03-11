@@ -4,3 +4,10 @@ __pycache__/
 wandb/
 *.err
 *.out
+*.pt
+*.ckpt
+*.wav
+.hf_home/
+.numba_cache/
+baseline_scripts/data/
+tears_audio/
