@@ -1,5 +1,0 @@
-task,source_prefix,n_selected,n_eval,n_inference_failed,n_audio_unresolved,n_value_available,n_value_pred,n_value_correct,exact_match_accuracy,value_accuracy,value_extraction_rate
-age,ears_dataset_processed,20,0,0,3797,0,0,0,0.0,0.0,0.0
-gender,ears_dataset_processed,20,0,0,3797,0,0,0,0.0,0.0,0.0
-age,OVERALL,20,0,0,3797,0,0,0,0.0,0.0,0.0
-gender,OVERALL,20,0,0,3797,0,0,0,0.0,0.0,0.0

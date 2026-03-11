@@ -1,4 +1,0 @@
-task,dataset,n_eval,value_accuracy,exact_match_accuracy
-gender,ears_dataset_processed,51,1.0000,0.0000
-age,ears_dataset_processed,51,0.7647,0.3529
-dialect,timit_dataset,0,N/A,N/A
