@@ -1,0 +1,10 @@
+{
+  "dataset": "cmu-mlsp/TEARS",
+  "split": "test",
+  "rows_exported": 44939,
+  "audio_path_prefix_counts": {
+    "ears_dataset_processed": 7022,
+    "timit_dataset": 1680,
+    "voxceleb2_dataset": 36237
+  }
+}

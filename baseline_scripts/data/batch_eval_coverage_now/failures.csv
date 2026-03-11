@@ -1,0 +1,1 @@
+task,source_prefix,audio_path,resolved_audio_path,resolution_method,prompt,gold_response,true_value,prediction,pred_value,is_exact_match,is_value_correct,status,error

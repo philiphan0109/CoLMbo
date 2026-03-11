@@ -1,0 +1,4 @@
+task,status,source_prefix,waveform,prompt,gold_answer,prediction,error
+gender,ok,ears_dataset_processed,baseline_scripts/data/three_task_baseline/gender.wav,What is the speaker's gender inferred from their speech characteristics?,The speaker's gender is inferred to be male.,The speaker's gender is inferred to be male based on their vocal traits.,
+age,ok,ears_dataset_processed,baseline_scripts/data/three_task_baseline/age.wav,What is the speaker's age?,The speaker is between 36 and 45 years old.,The speaker is between 36 and 45 years old.,
+dialect,skipped,,,,,,dialect requires --timit-root (strict mode)

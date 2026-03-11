@@ -9,5 +9,4 @@ wandb/
 *.wav
 .hf_home/
 .numba_cache/
-baseline_scripts/data/
 tears_audio/

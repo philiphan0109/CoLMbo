@@ -1,0 +1,32 @@
+[
+  {
+    "task": "gender",
+    "status": "ok",
+    "source_prefix": "ears_dataset_processed",
+    "waveform": "baseline_scripts/data/three_task_baseline/gender.wav",
+    "prompt": "What is the speaker's gender inferred from their speech characteristics?",
+    "gold_answer": "The speaker's gender is inferred to be male.",
+    "prediction": "The speaker's gender is inferred to be male based on their vocal traits.",
+    "error": ""
+  },
+  {
+    "task": "age",
+    "status": "ok",
+    "source_prefix": "ears_dataset_processed",
+    "waveform": "baseline_scripts/data/three_task_baseline/age.wav",
+    "prompt": "What is the speaker's age?",
+    "gold_answer": "The speaker is between 36 and 45 years old.",
+    "prediction": "The speaker is between 36 and 45 years old.",
+    "error": ""
+  },
+  {
+    "task": "dialect",
+    "status": "skipped",
+    "source_prefix": "",
+    "waveform": "",
+    "prompt": "",
+    "gold_answer": "",
+    "prediction": "",
+    "error": "dialect requires --timit-root (strict mode)"
+  }
+]
