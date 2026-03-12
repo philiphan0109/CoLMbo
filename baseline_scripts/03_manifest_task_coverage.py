@@ -5,7 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 
 
-TASKS = ("gender", "age", "dialect")
+TASKS = ("gender", "age", "dialect", "ethnicity")
 
 
 def parse_args():
@@ -47,7 +47,9 @@ def main():
     if not manifest.exists():
         raise FileNotFoundError(f"Missing manifest: {manifest}")
 
-    stats = defaultdict(lambda: {"rows": 0, "gender": 0, "age": 0, "dialect": 0})
+    stats = defaultdict(
+        lambda: {"rows": 0, "gender": 0, "age": 0, "dialect": 0, "ethnicity": 0}
+    )
     scanned = 0
 
     for row in iter_manifest(manifest):
@@ -66,10 +68,14 @@ def main():
 
     print(f"Scanned rows: {scanned}")
     print("")
-    print("source_prefix,rows,rows_with_gender,rows_with_age,rows_with_dialect")
+    print(
+        "source_prefix,rows,rows_with_gender,rows_with_age,rows_with_dialect,rows_with_ethnicity"
+    )
     for prefix in sorted(stats):
         s = stats[prefix]
-        print(f"{prefix},{s['rows']},{s['gender']},{s['age']},{s['dialect']}")
+        print(
+            f"{prefix},{s['rows']},{s['gender']},{s['age']},{s['dialect']},{s['ethnicity']}"
+        )
 
 
 if __name__ == "__main__":

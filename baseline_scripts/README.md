@@ -41,7 +41,7 @@ Note:
 - If you only need a runnable sample (not strict task matching), add `--allow-prompt-fallback`.
 
 ## 03_manifest_task_coverage.py
-Reports prompt coverage (`gender`, `age`, `dialect`) by source prefix from the manifest.
+Reports prompt coverage (`gender`, `age`, `dialect`, `ethnicity`) by source prefix from the manifest.
 
 Example:
 ```bash
@@ -70,6 +70,12 @@ Runs batched evaluation and writes:
 - grouped metrics: `summary.csv` / `summary.json`
 - failure subset: `failures.csv`
 
+Current TEARS task/source defaults:
+- `gender`: EARS + TIMIT
+- `age`: EARS + TIMIT + VoxCeleb2
+- `dialect`: TIMIT only
+- `ethnicity`: EARS only
+
 By default (for speed), caps evaluation at `200` samples per `(task, source_prefix)` group.
 Set `--max-samples-per-group 0` to evaluate all available rows.
 
@@ -83,11 +89,22 @@ python baseline_scripts/05_batch_eval_baseline.py \
   --output-dir baseline_scripts/data/batch_eval
 ```
 
+Example (age + gender + ethnicity only):
+```bash
+python baseline_scripts/05_batch_eval_baseline.py \
+  --manifest baseline_scripts/data/tears_test_manifest.jsonl \
+  --ears-root tears_audio \
+  --tasks age gender ethnicity \
+  --max-samples-per-group 0 \
+  --output-dir baseline_scripts/data/batch_eval_age_gender_ethnicity
+```
+
 ## 06_plot_raw_metrics.py
 Creates figures from `summary.csv`:
-- task x dataset heatmap (`value_accuracy`)
-- grouped accuracy bars
-- support counts plot
+- value-accuracy heatmap with sample counts
+- value-accuracy bars with 95% Wilson confidence intervals
+- exact-match vs value-accuracy comparison
+- support and extraction-rate view
 
 Example:
 ```bash

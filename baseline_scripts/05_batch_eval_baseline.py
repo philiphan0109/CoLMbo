@@ -5,6 +5,7 @@ import json
 import os
 import re
 import sys
+import time
 from collections import defaultdict
 from pathlib import Path
 
@@ -32,27 +33,46 @@ from load_data.extract_fbanks import Mel_Spectrogram
 from wrapper import ExpWrapper
 
 
-TASKS = ("gender", "age", "dialect")
+TASKS = ("gender", "age", "dialect", "ethnicity")
 TASK_TO_SPEAKER_KEY = {
     "gender": "gender",
     "age": "age",
     "dialect": "dialect_region",
+    "ethnicity": "ethnicity",
 }
 DEFAULT_TASK_PREFIXES = {
     "gender": ("ears_dataset_processed", "timit_dataset"),
     "age": ("ears_dataset_processed", "timit_dataset", "voxceleb2_dataset"),
     "dialect": ("timit_dataset",),
+    "ethnicity": ("ears_dataset_processed",),
 }
 PROMPT_KEYWORDS = {
     "gender": "gender",
     "age": "age",
     "dialect": "dialect",
+    "ethnicity": "ethnicity",
 }
 EARS_SEGMENT_RE = re.compile(
     r"^ears_dataset_processed/(?P<split>[^/]+)/(?P<speaker>p\d{3})/(?P<stem>.+)_(?P<start>\d+)_(?P<end>\d+)\.wav$",
     flags=re.IGNORECASE,
 )
 AGE_RANGE_RE = re.compile(r"(\d{1,2})\s*(?:-|to|and)\s*(\d{1,2})")
+MISSING_VALUE_TOKENS = {"", "unknown", "none", "null", "nan", "n/a", "na"}
+ETHNICITY_CANONICAL = {
+    "white": "White",
+    "black": "Black or African American",
+    "african american": "Black or African American",
+    "asian": "Asian",
+    "hispanic": "Hispanic or Latino",
+    "latino": "Hispanic or Latino",
+    "latina": "Hispanic or Latino",
+    "middle eastern": "Middle Eastern or North African",
+    "native american": "Native American or Alaska Native",
+    "american indian": "Native American or Alaska Native",
+    "pacific islander": "Native Hawaiian or Other Pacific Islander",
+    "multiracial": "Multiracial",
+    "mixed": "Multiracial",
+}
 
 
 def parse_args():
@@ -109,6 +129,17 @@ def parse_args():
         action="store_true",
         help="Skip model inference, only resolve/evaluate pipeline selection logic.",
     )
+    parser.add_argument(
+        "--progress-every",
+        type=int,
+        default=25,
+        help="Progress print frequency when tqdm is unavailable (in samples).",
+    )
+    parser.add_argument(
+        "--no-tqdm",
+        action="store_true",
+        help="Disable tqdm progress bar even if tqdm is installed.",
+    )
     return parser.parse_args()
 
 
@@ -153,27 +184,58 @@ def canonical_age(text):
     return None
 
 
+def is_missing_value(value):
+    if value is None:
+        return True
+    norm = normalize_text(value)
+    return norm in MISSING_VALUE_TOKENS
+
+
+def longest_known_match(text_norm, known_values):
+    best = None
+    best_len = -1
+    for value in known_values:
+        val_norm = normalize_text(value)
+        if val_norm and val_norm in text_norm and len(val_norm) > best_len:
+            best = value
+            best_len = len(val_norm)
+    return best
+
+
 def canonical_dialect(text, known_dialects):
     text_norm = normalize_text(text)
     if not text_norm:
         return None
-    best = None
-    best_len = -1
-    for d in known_dialects:
-        dn = normalize_text(d)
-        if dn and dn in text_norm and len(dn) > best_len:
-            best = d
-            best_len = len(dn)
-    return best
+    return longest_known_match(text_norm, known_dialects)
 
 
-def canonical_value(task, text, known_dialects):
+def canonical_ethnicity(text, known_ethnicities):
+    text_norm = normalize_text(text)
+    if not text_norm:
+        return None
+
+    known_match = longest_known_match(text_norm, known_ethnicities)
+    if known_match is not None:
+        return known_match
+
+    for key, canonical in ETHNICITY_CANONICAL.items():
+        if key in text_norm:
+            for known in known_ethnicities:
+                if normalize_text(known) == normalize_text(canonical):
+                    return known
+            return canonical
+    return None
+
+
+def canonical_value(task, text, task_values):
     if task == "gender":
         return canonical_gender(text)
     if task == "age":
         return canonical_age(text)
     if task == "dialect":
-        return canonical_dialect(text, known_dialects)
+        return canonical_dialect(text, task_values["dialect"])
+    if task == "ethnicity":
+        return canonical_ethnicity(text, task_values["ethnicity"])
     return None
 
 
@@ -247,19 +309,13 @@ def resolve_audio(audio_path, source_prefix, roots, cache_root):
     return None, "missing_audio_file"
 
 
-def speaker_true_value(task, speaker_obj):
+def speaker_true_value(task, speaker_obj, task_values):
     if not isinstance(speaker_obj, dict):
         return None
     raw = speaker_obj.get(TASK_TO_SPEAKER_KEY[task])
-    if raw is None:
+    if is_missing_value(raw):
         return None
-    if task == "gender":
-        return canonical_gender(raw)
-    if task == "age":
-        return canonical_age(raw)
-    if task == "dialect":
-        return str(raw).strip()
-    return None
+    return canonical_value(task, raw, task_values)
 
 
 class Inferencer:
@@ -326,7 +382,7 @@ class Inferencer:
         return texts[0] if texts else ""
 
 
-def build_rows(args, roots, known_dialects):
+def build_rows(args, roots, task_values):
     rows = []
     per_group_selected = defaultdict(int)
     unresolved_counts = defaultdict(int)
@@ -375,7 +431,7 @@ def build_rows(args, roots, known_dialects):
                     "resolution_method": resolution_method,
                     "prompt": prompt,
                     "gold_response": gold_response,
-                    "true_value": speaker_true_value(task, row.get("speaker")),
+                    "true_value": speaker_true_value(task, row.get("speaker"), task_values),
                     "prediction": "",
                     "pred_value": "",
                     "status": "pending",
@@ -386,7 +442,7 @@ def build_rows(args, roots, known_dialects):
     return rows, unresolved_counts
 
 
-def add_metrics(rows, known_dialects):
+def add_metrics(rows, task_values):
     for r in rows:
         if r["status"] != "ok":
             r["is_exact_match"] = ""
@@ -395,7 +451,7 @@ def add_metrics(rows, known_dialects):
         pred = r.get("prediction", "")
         gold = r.get("gold_response", "")
         true_value = r.get("true_value")
-        pred_value = canonical_value(r["task"], pred, known_dialects)
+        pred_value = canonical_value(r["task"], pred, task_values)
         r["pred_value"] = "" if pred_value is None else str(pred_value)
         exact = normalize_text(pred) == normalize_text(gold)
         value_ok = (
@@ -485,6 +541,18 @@ def write_csv(path: Path, rows, fieldnames):
         writer.writerows(rows)
 
 
+def format_duration(seconds):
+    if seconds is None:
+        return "n/a"
+    seconds = max(0, int(seconds))
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    s = seconds % 60
+    if h > 0:
+        return f"{h:d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
 def main():
     args = parse_args()
     out_dir = Path(args.output_dir)
@@ -496,14 +564,23 @@ def main():
         "voxceleb2_dataset": Path(args.voxceleb_root) if args.voxceleb_root else None,
     }
 
-    # Build known dialect set from manifest speaker metadata for robust extraction.
-    known_dialects = set()
+    # Build known label vocab from manifest speaker metadata for robust value extraction.
+    task_values = {
+        "dialect": set(),
+        "ethnicity": set(),
+    }
     for row in iter_manifest(Path(args.manifest)):
         sp = row.get("speaker")
-        if isinstance(sp, dict) and sp.get("dialect_region"):
-            known_dialects.add(str(sp["dialect_region"]))
+        if not isinstance(sp, dict):
+            continue
+        dialect = sp.get("dialect_region")
+        ethnicity = sp.get("ethnicity")
+        if not is_missing_value(dialect):
+            task_values["dialect"].add(str(dialect).strip())
+        if not is_missing_value(ethnicity):
+            task_values["ethnicity"].add(str(ethnicity).strip())
 
-    rows, unresolved_counts = build_rows(args, roots, known_dialects)
+    rows, unresolved_counts = build_rows(args, roots, task_values)
     pending = [r for r in rows if r["status"] == "pending"]
     print(f"Selected rows for evaluation: {len(pending)}")
     if args.dry_run:
@@ -512,21 +589,60 @@ def main():
             if r["status"] == "pending":
                 r["status"] = "dry_run"
     else:
-        infer = Inferencer(Path(args.config))
-        for i, r in enumerate(rows, start=1):
-            if r["status"] != "pending":
-                continue
-            try:
-                pred = infer.predict(Path(r["resolved_audio_path"]), r["prompt"])
-                r["prediction"] = pred
-                r["status"] = "ok"
-            except Exception as e:
-                r["status"] = "inference_failed"
-                r["error"] = str(e)
-            if i % 50 == 0:
-                print(f"Processed {i}/{len(rows)} rows...")
+        if not pending:
+            print("No rows selected; skipping model initialization and inference.")
+        else:
+            infer = Inferencer(Path(args.config))
+            use_tqdm = False
+            pbar = None
+            if not args.no_tqdm:
+                try:
+                    from tqdm import tqdm  # type: ignore
 
-    add_metrics(rows, known_dialects)
+                    use_tqdm = True
+                    pbar = tqdm(total=len(pending), desc="Inference", unit="sample")
+                except Exception:
+                    use_tqdm = False
+                    pbar = None
+
+            progress_every = max(1, int(args.progress_every))
+            done = 0
+            start_time = time.time()
+            for r in rows:
+                if r["status"] != "pending":
+                    continue
+                try:
+                    pred = infer.predict(Path(r["resolved_audio_path"]), r["prompt"])
+                    r["prediction"] = pred
+                    r["status"] = "ok"
+                except Exception as e:
+                    r["status"] = "inference_failed"
+                    r["error"] = str(e)
+
+                done += 1
+                elapsed = max(1e-6, time.time() - start_time)
+                rate = done / elapsed
+                remaining = len(pending) - done
+                eta = (remaining / rate) if rate > 0 else None
+
+                if use_tqdm and pbar is not None:
+                    pbar.update(1)
+                    pbar.set_postfix_str(
+                        f"elapsed={format_duration(elapsed)} eta={format_duration(eta)} rate={rate:.2f}/s"
+                    )
+                elif done % progress_every == 0 or done == len(pending):
+                    print(
+                        f"[{done}/{len(pending)}] "
+                        f"{(100.0 * done / len(pending)):.1f}% "
+                        f"elapsed={format_duration(elapsed)} "
+                        f"eta={format_duration(eta)} "
+                        f"rate={rate:.2f}/s"
+                    )
+
+            if pbar is not None:
+                pbar.close()
+
+    add_metrics(rows, task_values)
     summary = summarize(rows, unresolved_counts)
 
     predictions_csv = out_dir / "predictions.csv"

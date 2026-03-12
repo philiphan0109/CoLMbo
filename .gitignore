@@ -10,3 +10,4 @@ wandb/
 .hf_home/
 .numba_cache/g
 tears_audio/
+timit_root/
