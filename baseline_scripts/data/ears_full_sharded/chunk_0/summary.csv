@@ -1,0 +1,7 @@
+task,source_prefix,n_selected,n_eval,n_inference_failed,n_audio_unresolved,n_value_available,n_value_pred,n_value_correct,exact_match_accuracy,value_accuracy,value_extraction_rate
+age,ears_dataset_processed,621,621,0,0,621,621,364,0.1288244766505636,0.5861513687600645,1.0
+ethnicity,ears_dataset_processed,621,621,0,0,621,621,461,0.061191626409017714,0.7423510466988728,1.0
+gender,ears_dataset_processed,621,621,0,0,621,621,603,0.0,0.9710144927536232,1.0
+age,OVERALL,621,621,0,0,621,621,364,0.1288244766505636,0.5861513687600645,1.0
+ethnicity,OVERALL,621,621,0,0,621,621,461,0.061191626409017714,0.7423510466988728,1.0
+gender,OVERALL,621,621,0,0,621,621,603,0.0,0.9710144927536232,1.0
