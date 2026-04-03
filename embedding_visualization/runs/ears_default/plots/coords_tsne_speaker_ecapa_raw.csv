@@ -1,0 +1,107 @@
+speaker_id,gender,age,ethnicity,n_utterances,embedding_family,x,y
+p001,male,36-45,white or caucasian,51,ecapa,6.272441,3.4840906
+p002,female,46-55,white or caucasian,51,ecapa,-2.7281275,-1.376591
+p003,female,26-35,black or african american,53,ecapa,-3.221402,-3.0964735
+p004,male,18-25,white or caucasian,52,ecapa,5.438214,1.4620225
+p005,male,18-25,asian,251,ecapa,5.5769935,-0.62211424
+p006,female,36-45,hispanic or latino,56,ecapa,-0.85702485,-5.304727
+p007,male,36-45,white or caucasian,50,ecapa,7.378234,0.0808366
+p008,male,56-65,white or caucasian,57,ecapa,3.5042508,3.2772841
+p009,male,18-25,white or caucasian,53,ecapa,6.5833106,2.6883626
+p010,male,36-45,black or african american,53,ecapa,5.4738665,5.7048106
+p011,female,18-25,white or caucasian,267,ecapa,-2.8272636,-3.0844438
+p012,female,26-35,hispanic or latino,57,ecapa,2.3731394,-1.4154333
+p013,female,26-35,white or caucasian,52,ecapa,-2.5388832,-6.482326
+p014,female,26-35,white or caucasian,58,ecapa,-1.5339248,0.17533061
+p015,female,46-55,white or caucasian,68,ecapa,-0.037651118,-0.7933793
+p016,male,18-25,white or caucasian,49,ecapa,7.5220532,3.2549913
+p017,male,36-45,white or caucasian,58,ecapa,7.0219073,1.7502979
+p018,female,46-55,white or caucasian,55,ecapa,1.5882105,0.4437012
+p019,male,18-25,white or caucasian,51,ecapa,3.4618857,5.795206
+p020,male,26-35,black or african american,58,ecapa,5.573788,-0.9999897
+p021,female,66-75,white or caucasian,55,ecapa,-0.84080523,-1.4835968
+p022,male,36-45,white or caucasian,51,ecapa,2.4303298,4.2597466
+p023,male,26-35,white or caucasian,51,ecapa,6.7246685,0.21343581
+p024,female,36-45,white or caucasian,52,ecapa,-3.0568557,-1.890513
+p025,male,46-55,white or caucasian,54,ecapa,3.6621006,5.143704
+p026,female,46-55,white or caucasian,56,ecapa,-2.1102266,-2.0971072
+p027,female,46-55,white or caucasian,51,ecapa,-4.979857,-3.5459688
+p028,female,18-25,white or caucasian,52,ecapa,-3.4931114,-3.895406
+p029,female,26-35,black or african american,56,ecapa,-1.711554,-2.7471883
+p030,female,26-35,white or caucasian,54,ecapa,3.0269635,-2.0508606
+p031,male,18-25,hispanic or latino,52,ecapa,4.318952,2.8940196
+p032,female,56-65,white or caucasian,54,ecapa,0.09763649,0.0059190504
+p033,female,56-65,white or caucasian,62,ecapa,0.45905936,-1.8375274
+p034,female,56-65,white or caucasian,61,ecapa,-0.49576163,-1.4520874
+p035,female,18-25,white or caucasian,55,ecapa,-2.5798879,-4.005934
+p036,female,26-35,black or african american,59,ecapa,-0.007967244,-2.3260033
+p037,female,46-55,white or caucasian,53,ecapa,-1.1819819,-4.095446
+p038,male,26-35,hispanic or latino,53,ecapa,4.852586,0.27487254
+p039,male,26-35,white or caucasian,53,ecapa,4.7168508,6.498367
+p040,male,18-25,white or caucasian,53,ecapa,5.7310295,0.9984472
+p041,female,18-25,black or african american,53,ecapa,3.7621386,-1.5020032
+p042,male,18-25,hispanic or latino,53,ecapa,6.642255,4.866419
+p044,female,46-55,white or caucasian,59,ecapa,-1.9626194,-2.7535114
+p045,female,18-25,black or african american,55,ecapa,2.398124,-1.539173
+p046,male,26-35,white or caucasian,54,ecapa,5.6498904,2.555379
+p047,female,56-65,white or caucasian,51,ecapa,-1.7712646,-0.73923284
+p048,female,56-65,white or caucasian,52,ecapa,-2.2378342,-1.8494221
+p049,male,36-45,white or caucasian,54,ecapa,4.1145477,3.4576983
+p050,female,56-65,white or caucasian,54,ecapa,0.58074766,-4.0270686
+p051,female,46-55,white or caucasian,59,ecapa,-4.5063515,-2.43196
+p052,female,18-25,black or african american,54,ecapa,-1.2345221,-3.633513
+p053,female,18-25,white or caucasian,57,ecapa,-1.2861981,-4.60489
+p054,male,46-55,white or caucasian,51,ecapa,3.4389143,5.0066423
+p055,female,46-55,white or caucasian,51,ecapa,-0.45932823,-3.1002963
+p056,female,18-25,white or caucasian,56,ecapa,-1.7880279,-3.9603999
+p057,male,18-25,white or caucasian,52,ecapa,4.5814285,1.5822953
+p058,female,26-35,white or caucasian,54,ecapa,-3.029402,-4.585633
+p059,female,26-35,white or caucasian,61,ecapa,-2.686191,-3.2493913
+p060,male,26-35,hispanic or latino,51,ecapa,5.841512,0.68083996
+p061,female,56-65,white or caucasian,51,ecapa,-0.8099222,-1.9209135
+p062,female,18-25,hispanic or latino,50,ecapa,-3.945303,-4.9343233
+p063,female,36-45,white or caucasian,54,ecapa,-4.3107276,-1.3397554
+p064,female,36-45,white or caucasian,53,ecapa,0.24119942,-0.33563992
+p065,male,56-65,white or caucasian,54,ecapa,3.9526052,3.9152734
+p066,female,46-55,white or caucasian,54,ecapa,0.8376736,-5.1093493
+p067,female,18-25,asian,256,ecapa,-1.1579758,-6.227714
+p068,female,18-25,hispanic or latino,51,ecapa,-2.1684778,-5.3567615
+p069,female,46-55,white or caucasian,55,ecapa,-0.7256673,-2.4990635
+p070,female,36-45,white or caucasian,59,ecapa,0.33777192,-4.0862103
+p071,male,18-25,black or african american,56,ecapa,5.455919,0.9544877
+p072,prefer not to answer,prefer not to answer,prefer not to answer,54,ecapa,-2.8961055,-3.5122337
+p073,female,18-25,black or african american,55,ecapa,6.4397364,0.43711796
+p074,male,18-25,white or caucasian,54,ecapa,7.9931865,1.4716817
+p075,female,18-25,black or african american,51,ecapa,2.64467,-1.4066509
+p076,male,26-35,white or caucasian,51,ecapa,3.2637553,2.1137693
+p077,male,46-55,white or caucasian,54,ecapa,4.1567965,5.273587
+p078,prefer not to answer,18-25,white or caucasian,51,ecapa,-2.5846624,-4.951958
+p079,female,46-55,white or caucasian,58,ecapa,-2.8398247,-0.56281966
+p080,female,26-35,black or african american,55,ecapa,2.2434251,-2.2410796
+p081,male,18-25,white or caucasian,51,ecapa,4.7493954,2.0966156
+p082,female,26-35,black or african american,51,ecapa,-1.556528,-3.0225203
+p083,female,26-35,black or african american,304,ecapa,-1.050116,-0.21509294
+p084,female,66-75,white or caucasian,51,ecapa,0.8711022,0.047387116
+p085,male,26-35,white or caucasian,53,ecapa,6.05994,3.0295684
+p086,male,18-25,white or caucasian,55,ecapa,3.397676,2.168769
+p087,male,56-65,white or caucasian,56,ecapa,5.6723733,3.9509027
+p088,male,18-25,white or caucasian,51,ecapa,6.415221,2.1083999
+p089,female,26-35,asian,54,ecapa,-3.593061,-5.033211
+p090,male,56-65,white or caucasian,56,ecapa,4.578992,3.9798768
+p091,male,26-35,white or caucasian,55,ecapa,6.5163245,3.219066
+p092,female,36-45,white or caucasian,55,ecapa,2.711461,-0.26578453
+p093,female,56-65,white or caucasian,55,ecapa,-0.08902903,-3.9933486
+p094,male,36-45,hispanic or latino,55,ecapa,2.1828222,3.171133
+p095,male,36-45,white or caucasian,51,ecapa,2.1590664,4.3413143
+p096,non-binary / third gender,18-25,white or caucasian,51,ecapa,-2.6752725,-5.0319104
+p097,male,56-65,white or caucasian,53,ecapa,4.8337774,3.315129
+p098,female,46-55,black or african american,57,ecapa,1.9136246,0.58659774
+p099,female,46-55,black or african american,269,ecapa,4.1912646,-1.6171647
+p100,female,36-45,white or caucasian,54,ecapa,1.9910382,-0.5003611
+p101,male,46-55,black or african american,53,ecapa,5.6005793,5.5546737
+p102,male,26-35,white or caucasian,251,ecapa,5.1103835,2.8503826
+p103,prefer not to answer,prefer not to answer,prefer not to answer,65,ecapa,-1.4176569,-2.2423637
+p104,female,56-65,white or caucasian,55,ecapa,1.2624631,-1.5739026
+p105,male,36-45,black or african american,58,ecapa,4.764616,5.6604347
+p106,female,56-65,white or caucasian,55,ecapa,-4.002832,-2.7918613
+p107,male,36-45,asian,54,ecapa,6.448705,-0.73924696

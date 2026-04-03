@@ -1,0 +1,3 @@
+speaker_id,gender,age,ethnicity,n_utterances,embedding_family
+p066,female,46-55,white or caucasian,47,ecapa
+p101,male,46-55,black or african american,53,ecapa

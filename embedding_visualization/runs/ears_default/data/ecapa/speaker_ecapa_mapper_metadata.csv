@@ -1,0 +1,107 @@
+speaker_id,gender,age,ethnicity,n_utterances,embedding_family
+p001,male,36-45,white or caucasian,51,ecapa
+p002,female,46-55,white or caucasian,51,ecapa
+p003,female,26-35,black or african american,53,ecapa
+p004,male,18-25,white or caucasian,52,ecapa
+p005,male,18-25,asian,251,ecapa
+p006,female,36-45,hispanic or latino,56,ecapa
+p007,male,36-45,white or caucasian,50,ecapa
+p008,male,56-65,white or caucasian,57,ecapa
+p009,male,18-25,white or caucasian,53,ecapa
+p010,male,36-45,black or african american,53,ecapa
+p011,female,18-25,white or caucasian,267,ecapa
+p012,female,26-35,hispanic or latino,57,ecapa
+p013,female,26-35,white or caucasian,52,ecapa
+p014,female,26-35,white or caucasian,58,ecapa
+p015,female,46-55,white or caucasian,68,ecapa
+p016,male,18-25,white or caucasian,49,ecapa
+p017,male,36-45,white or caucasian,58,ecapa
+p018,female,46-55,white or caucasian,55,ecapa
+p019,male,18-25,white or caucasian,51,ecapa
+p020,male,26-35,black or african american,58,ecapa
+p021,female,66-75,white or caucasian,55,ecapa
+p022,male,36-45,white or caucasian,51,ecapa
+p023,male,26-35,white or caucasian,51,ecapa
+p024,female,36-45,white or caucasian,52,ecapa
+p025,male,46-55,white or caucasian,54,ecapa
+p026,female,46-55,white or caucasian,56,ecapa
+p027,female,46-55,white or caucasian,51,ecapa
+p028,female,18-25,white or caucasian,52,ecapa
+p029,female,26-35,black or african american,56,ecapa
+p030,female,26-35,white or caucasian,54,ecapa
+p031,male,18-25,hispanic or latino,52,ecapa
+p032,female,56-65,white or caucasian,54,ecapa
+p033,female,56-65,white or caucasian,62,ecapa
+p034,female,56-65,white or caucasian,61,ecapa
+p035,female,18-25,white or caucasian,55,ecapa
+p036,female,26-35,black or african american,59,ecapa
+p037,female,46-55,white or caucasian,53,ecapa
+p038,male,26-35,hispanic or latino,53,ecapa
+p039,male,26-35,white or caucasian,53,ecapa
+p040,male,18-25,white or caucasian,53,ecapa
+p041,female,18-25,black or african american,53,ecapa
+p042,male,18-25,hispanic or latino,53,ecapa
+p044,female,46-55,white or caucasian,59,ecapa
+p045,female,18-25,black or african american,55,ecapa
+p046,male,26-35,white or caucasian,54,ecapa
+p047,female,56-65,white or caucasian,51,ecapa
+p048,female,56-65,white or caucasian,52,ecapa
+p049,male,36-45,white or caucasian,54,ecapa
+p050,female,56-65,white or caucasian,54,ecapa
+p051,female,46-55,white or caucasian,59,ecapa
+p052,female,18-25,black or african american,54,ecapa
+p053,female,18-25,white or caucasian,57,ecapa
+p054,male,46-55,white or caucasian,51,ecapa
+p055,female,46-55,white or caucasian,51,ecapa
+p056,female,18-25,white or caucasian,56,ecapa
+p057,male,18-25,white or caucasian,52,ecapa
+p058,female,26-35,white or caucasian,54,ecapa
+p059,female,26-35,white or caucasian,61,ecapa
+p060,male,26-35,hispanic or latino,51,ecapa
+p061,female,56-65,white or caucasian,51,ecapa
+p062,female,18-25,hispanic or latino,50,ecapa
+p063,female,36-45,white or caucasian,54,ecapa
+p064,female,36-45,white or caucasian,53,ecapa
+p065,male,56-65,white or caucasian,54,ecapa
+p066,female,46-55,white or caucasian,54,ecapa
+p067,female,18-25,asian,256,ecapa
+p068,female,18-25,hispanic or latino,51,ecapa
+p069,female,46-55,white or caucasian,55,ecapa
+p070,female,36-45,white or caucasian,59,ecapa
+p071,male,18-25,black or african american,56,ecapa
+p072,prefer not to answer,prefer not to answer,prefer not to answer,54,ecapa
+p073,female,18-25,black or african american,55,ecapa
+p074,male,18-25,white or caucasian,54,ecapa
+p075,female,18-25,black or african american,51,ecapa
+p076,male,26-35,white or caucasian,51,ecapa
+p077,male,46-55,white or caucasian,54,ecapa
+p078,prefer not to answer,18-25,white or caucasian,51,ecapa
+p079,female,46-55,white or caucasian,58,ecapa
+p080,female,26-35,black or african american,55,ecapa
+p081,male,18-25,white or caucasian,51,ecapa
+p082,female,26-35,black or african american,51,ecapa
+p083,female,26-35,black or african american,304,ecapa
+p084,female,66-75,white or caucasian,51,ecapa
+p085,male,26-35,white or caucasian,53,ecapa
+p086,male,18-25,white or caucasian,55,ecapa
+p087,male,56-65,white or caucasian,56,ecapa
+p088,male,18-25,white or caucasian,51,ecapa
+p089,female,26-35,asian,54,ecapa
+p090,male,56-65,white or caucasian,56,ecapa
+p091,male,26-35,white or caucasian,55,ecapa
+p092,female,36-45,white or caucasian,55,ecapa
+p093,female,56-65,white or caucasian,55,ecapa
+p094,male,36-45,hispanic or latino,55,ecapa
+p095,male,36-45,white or caucasian,51,ecapa
+p096,non-binary / third gender,18-25,white or caucasian,51,ecapa
+p097,male,56-65,white or caucasian,53,ecapa
+p098,female,46-55,black or african american,57,ecapa
+p099,female,46-55,black or african american,269,ecapa
+p100,female,36-45,white or caucasian,54,ecapa
+p101,male,46-55,black or african american,53,ecapa
+p102,male,26-35,white or caucasian,251,ecapa
+p103,prefer not to answer,prefer not to answer,prefer not to answer,65,ecapa
+p104,female,56-65,white or caucasian,55,ecapa
+p105,male,36-45,black or african american,58,ecapa
+p106,female,56-65,white or caucasian,55,ecapa
+p107,male,36-45,asian,54,ecapa

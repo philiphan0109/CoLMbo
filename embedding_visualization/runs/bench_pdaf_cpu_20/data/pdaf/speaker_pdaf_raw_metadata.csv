@@ -1,0 +1,2 @@
+speaker_id,gender,age,ethnicity,n_utterances,embedding_family,pdaf_mode
+p101,male,46-55,black or african american,20,pdaf,neutral_mel128

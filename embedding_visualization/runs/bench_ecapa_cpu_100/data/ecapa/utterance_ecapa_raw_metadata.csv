@@ -1,0 +1,101 @@
+row_index,audio_path,speaker_id,split,gender,age,ethnicity,embedding_family
+0,ears_dataset_processed/val/p101/sentences_17_regular_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+1,ears_dataset_processed/val/p101/freeform_speech_02_1120000_1280000.wav,p101,val,male,46-55,black or african american,ecapa
+2,ears_dataset_processed/val/p101/freeform_speech_02_640000_800000.wav,p101,val,male,46-55,black or african american,ecapa
+3,ears_dataset_processed/val/p101/rainbow_02_fast_0_154821.wav,p101,val,male,46-55,black or african american,ecapa
+4,ears_dataset_processed/val/p101/rainbow_07_highpitch_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+5,ears_dataset_processed/val/p101/freeform_speech_04_800000_960000.wav,p101,val,male,46-55,black or african american,ecapa
+6,ears_dataset_processed/val/p101/freeform_speech_06_2080000_2240000.wav,p101,val,male,46-55,black or african american,ecapa
+7,ears_dataset_processed/val/p101/freeform_speech_01_480000_640000.wav,p101,val,male,46-55,black or african american,ecapa
+8,ears_dataset_processed/val/p101/freeform_speech_02_320000_480000.wav,p101,val,male,46-55,black or african american,ecapa
+9,ears_dataset_processed/val/p101/sentences_02_loud_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+10,ears_dataset_processed/val/p101/freeform_speech_02_480000_640000.wav,p101,val,male,46-55,black or african american,ecapa
+11,ears_dataset_processed/val/p101/freeform_speech_04_640000_800000.wav,p101,val,male,46-55,black or african american,ecapa
+12,ears_dataset_processed/val/p101/rainbow_05_fast_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+13,ears_dataset_processed/val/p101/emo_pride_freeform_160000_320000.wav,p101,val,male,46-55,black or african american,ecapa
+14,ears_dataset_processed/val/p101/freeform_speech_06_1280000_1440000.wav,p101,val,male,46-55,black or african american,ecapa
+15,ears_dataset_processed/val/p101/freeform_speech_04_2560000_2720000.wav,p101,val,male,46-55,black or african american,ecapa
+16,ears_dataset_processed/val/p101/freeform_speech_06_960000_1120000.wav,p101,val,male,46-55,black or african american,ecapa
+17,ears_dataset_processed/val/p101/freeform_speech_05_1760000_1920000.wav,p101,val,male,46-55,black or african american,ecapa
+18,ears_dataset_processed/val/p101/sentences_03_whisper_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+19,ears_dataset_processed/val/p101/freeform_speech_04_960000_1120000.wav,p101,val,male,46-55,black or african american,ecapa
+20,ears_dataset_processed/val/p101/emo_amusement_sentences_0_140360.wav,p101,val,male,46-55,black or african american,ecapa
+21,ears_dataset_processed/val/p101/rainbow_06_slow_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+22,ears_dataset_processed/val/p101/freeform_speech_03_1440000_1600000.wav,p101,val,male,46-55,black or african american,ecapa
+23,ears_dataset_processed/val/p101/rainbow_02_regular_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+24,ears_dataset_processed/val/p101/emo_cuteness_freeform_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+25,ears_dataset_processed/val/p101/freeform_speech_02_1440000_1600000.wav,p101,val,male,46-55,black or african american,ecapa
+26,ears_dataset_processed/val/p101/emo_extasy_sentences_0_119385.wav,p101,val,male,46-55,black or african american,ecapa
+27,ears_dataset_processed/val/p101/rainbow_03_lowpitch_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+28,ears_dataset_processed/val/p101/emo_confusion_freeform_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+29,ears_dataset_processed/val/p101/emo_disappointment_freeform_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+30,ears_dataset_processed/val/p101/rainbow_01_slow_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+31,ears_dataset_processed/val/p101/emo_fear_sentences_0_132320.wav,p101,val,male,46-55,black or african american,ecapa
+32,ears_dataset_processed/val/p101/freeform_speech_06_640000_800000.wav,p101,val,male,46-55,black or african american,ecapa
+33,ears_dataset_processed/val/p101/freeform_speech_04_1440000_1600000.wav,p101,val,male,46-55,black or african american,ecapa
+34,ears_dataset_processed/val/p101/freeform_speech_01_1600000_1760000.wav,p101,val,male,46-55,black or african american,ecapa
+35,ears_dataset_processed/val/p101/sentences_15_regular_0_142603.wav,p101,val,male,46-55,black or african american,ecapa
+36,ears_dataset_processed/val/p101/emo_anger_sentences_0_143849.wav,p101,val,male,46-55,black or african american,ecapa
+37,ears_dataset_processed/val/p101/emo_distress_sentences_0_117009.wav,p101,val,male,46-55,black or african american,ecapa
+38,ears_dataset_processed/val/p101/freeform_speech_04_1280000_1440000.wav,p101,val,male,46-55,black or african american,ecapa
+39,ears_dataset_processed/val/p101/emo_pride_sentences_0_153022.wav,p101,val,male,46-55,black or african american,ecapa
+40,ears_dataset_processed/val/p101/sentences_23_regular_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+41,ears_dataset_processed/val/p101/sentences_01_lowpitch_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+42,ears_dataset_processed/val/p101/freeform_speech_03_800000_960000.wav,p101,val,male,46-55,black or african american,ecapa
+43,ears_dataset_processed/val/p101/sentences_05_loud_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+44,ears_dataset_processed/val/p101/sentences_01_whisper_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+45,ears_dataset_processed/val/p101/emo_cuteness_sentences_0_111269.wav,p101,val,male,46-55,black or african american,ecapa
+46,ears_dataset_processed/val/p101/rainbow_07_lowpitch_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+47,ears_dataset_processed/val/p101/freeform_speech_05_2560000_2720000.wav,p101,val,male,46-55,black or african american,ecapa
+48,ears_dataset_processed/val/p101/emo_distress_freeform_0_160000.wav,p101,val,male,46-55,black or african american,ecapa
+49,ears_dataset_processed/val/p101/freeform_speech_03_1920000_2080000.wav,p101,val,male,46-55,black or african american,ecapa
+50,ears_dataset_processed/val/p101/freeform_speech_01_1440000_1600000.wav,p101,val,male,46-55,black or african american,ecapa
+51,ears_dataset_processed/val/p101/freeform_speech_01_2560000_2720000.wav,p101,val,male,46-55,black or african american,ecapa
+52,ears_dataset_processed/val/p101/freeform_speech_03_640000_800000.wav,p101,val,male,46-55,black or african american,ecapa
+53,ears_dataset_processed/val/p066/freeform_speech_04_2720000_2880000.wav,p066,val,female,46-55,white or caucasian,ecapa
+54,ears_dataset_processed/val/p066/sentences_17_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+55,ears_dataset_processed/val/p066/freeform_speech_02_640000_800000.wav,p066,val,female,46-55,white or caucasian,ecapa
+56,ears_dataset_processed/val/p066/freeform_speech_06_1440000_1600000.wav,p066,val,female,46-55,white or caucasian,ecapa
+57,ears_dataset_processed/val/p066/freeform_speech_05_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+58,ears_dataset_processed/val/p066/freeform_speech_06_2400000_2560000.wav,p066,val,female,46-55,white or caucasian,ecapa
+59,ears_dataset_processed/val/p066/rainbow_08_highpitch_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+60,ears_dataset_processed/val/p066/freeform_speech_02_1760000_1920000.wav,p066,val,female,46-55,white or caucasian,ecapa
+61,ears_dataset_processed/val/p066/freeform_speech_02_480000_640000.wav,p066,val,female,46-55,white or caucasian,ecapa
+62,ears_dataset_processed/val/p066/rainbow_08_slow_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+63,ears_dataset_processed/val/p066/freeform_speech_04_640000_800000.wav,p066,val,female,46-55,white or caucasian,ecapa
+64,ears_dataset_processed/val/p066/rainbow_01_highpitch_0_156072.wav,p066,val,female,46-55,white or caucasian,ecapa
+65,ears_dataset_processed/val/p066/rainbow_07_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+66,ears_dataset_processed/val/p066/emo_disgust_sentences_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+67,ears_dataset_processed/val/p066/emo_extasy_freeform_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+68,ears_dataset_processed/val/p066/freeform_speech_04_2560000_2720000.wav,p066,val,female,46-55,white or caucasian,ecapa
+69,ears_dataset_processed/val/p066/emo_desire_sentences_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+70,ears_dataset_processed/val/p066/freeform_speech_05_1120000_1280000.wav,p066,val,female,46-55,white or caucasian,ecapa
+71,ears_dataset_processed/val/p066/sentences_02_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+72,ears_dataset_processed/val/p066/freeform_speech_01_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+73,ears_dataset_processed/val/p066/emo_neutral_sentences_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+74,ears_dataset_processed/val/p066/rainbow_03_slow_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+75,ears_dataset_processed/val/p066/emo_anger_freeform_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+76,ears_dataset_processed/val/p066/rainbow_03_highpitch_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+77,ears_dataset_processed/val/p066/rainbow_07_whisper_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+78,ears_dataset_processed/val/p066/rainbow_08_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+79,ears_dataset_processed/val/p066/freeform_speech_02_1440000_1600000.wav,p066,val,female,46-55,white or caucasian,ecapa
+80,ears_dataset_processed/val/p066/freeform_speech_05_1280000_1440000.wav,p066,val,female,46-55,white or caucasian,ecapa
+81,ears_dataset_processed/val/p066/freeform_speech_06_320000_480000.wav,p066,val,female,46-55,white or caucasian,ecapa
+82,ears_dataset_processed/val/p066/sentences_06_loud_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+83,ears_dataset_processed/val/p066/rainbow_08_highpitch_160000_320000.wav,p066,val,female,46-55,white or caucasian,ecapa
+84,ears_dataset_processed/val/p066/sentences_02_lowpitch_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+85,ears_dataset_processed/val/p066/emo_disappointment_freeform_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+86,ears_dataset_processed/val/p066/freeform_speech_05_320000_480000.wav,p066,val,female,46-55,white or caucasian,ecapa
+87,ears_dataset_processed/val/p066/sentences_15_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+88,ears_dataset_processed/val/p066/sentences_18_regular_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+89,ears_dataset_processed/val/p066/freeform_speech_06_640000_800000.wav,p066,val,female,46-55,white or caucasian,ecapa
+90,ears_dataset_processed/val/p066/sentences_07_slow_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+91,ears_dataset_processed/val/p066/freeform_speech_03_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+92,ears_dataset_processed/val/p066/freeform_speech_05_160000_320000.wav,p066,val,female,46-55,white or caucasian,ecapa
+93,ears_dataset_processed/val/p066/emo_serenity_sentences_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+94,ears_dataset_processed/val/p066/rainbow_06_loud_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+95,ears_dataset_processed/val/p066/emo_contentment_freeform_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+96,ears_dataset_processed/val/p066/emo_confusion_sentences_0_130359.wav,p066,val,female,46-55,white or caucasian,ecapa
+97,ears_dataset_processed/val/p066/freeform_speech_01_2240000_2400000.wav,p066,val,female,46-55,white or caucasian,ecapa
+98,ears_dataset_processed/val/p066/rainbow_05_loud_0_160000.wav,p066,val,female,46-55,white or caucasian,ecapa
+99,ears_dataset_processed/val/p066/freeform_speech_04_2400000_2560000.wav,p066,val,female,46-55,white or caucasian,ecapa

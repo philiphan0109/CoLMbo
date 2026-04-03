@@ -1,0 +1,107 @@
+speaker_id,gender,age,ethnicity,n_utterances,embedding_family,pdaf_mode
+p001,male,36-45,white or caucasian,51,pdaf,neutral_mel128
+p002,female,46-55,white or caucasian,51,pdaf,neutral_mel128
+p003,female,26-35,black or african american,53,pdaf,neutral_mel128
+p004,male,18-25,white or caucasian,52,pdaf,neutral_mel128
+p005,male,18-25,asian,251,pdaf,neutral_mel128
+p006,female,36-45,hispanic or latino,56,pdaf,neutral_mel128
+p007,male,36-45,white or caucasian,50,pdaf,neutral_mel128
+p008,male,56-65,white or caucasian,57,pdaf,neutral_mel128
+p009,male,18-25,white or caucasian,53,pdaf,neutral_mel128
+p010,male,36-45,black or african american,53,pdaf,neutral_mel128
+p011,female,18-25,white or caucasian,267,pdaf,neutral_mel128
+p012,female,26-35,hispanic or latino,57,pdaf,neutral_mel128
+p013,female,26-35,white or caucasian,52,pdaf,neutral_mel128
+p014,female,26-35,white or caucasian,58,pdaf,neutral_mel128
+p015,female,46-55,white or caucasian,68,pdaf,neutral_mel128
+p016,male,18-25,white or caucasian,49,pdaf,neutral_mel128
+p017,male,36-45,white or caucasian,58,pdaf,neutral_mel128
+p018,female,46-55,white or caucasian,55,pdaf,neutral_mel128
+p019,male,18-25,white or caucasian,51,pdaf,neutral_mel128
+p020,male,26-35,black or african american,58,pdaf,neutral_mel128
+p021,female,66-75,white or caucasian,55,pdaf,neutral_mel128
+p022,male,36-45,white or caucasian,51,pdaf,neutral_mel128
+p023,male,26-35,white or caucasian,51,pdaf,neutral_mel128
+p024,female,36-45,white or caucasian,52,pdaf,neutral_mel128
+p025,male,46-55,white or caucasian,54,pdaf,neutral_mel128
+p026,female,46-55,white or caucasian,56,pdaf,neutral_mel128
+p027,female,46-55,white or caucasian,51,pdaf,neutral_mel128
+p028,female,18-25,white or caucasian,52,pdaf,neutral_mel128
+p029,female,26-35,black or african american,56,pdaf,neutral_mel128
+p030,female,26-35,white or caucasian,54,pdaf,neutral_mel128
+p031,male,18-25,hispanic or latino,52,pdaf,neutral_mel128
+p032,female,56-65,white or caucasian,54,pdaf,neutral_mel128
+p033,female,56-65,white or caucasian,62,pdaf,neutral_mel128
+p034,female,56-65,white or caucasian,61,pdaf,neutral_mel128
+p035,female,18-25,white or caucasian,55,pdaf,neutral_mel128
+p036,female,26-35,black or african american,59,pdaf,neutral_mel128
+p037,female,46-55,white or caucasian,53,pdaf,neutral_mel128
+p038,male,26-35,hispanic or latino,53,pdaf,neutral_mel128
+p039,male,26-35,white or caucasian,53,pdaf,neutral_mel128
+p040,male,18-25,white or caucasian,53,pdaf,neutral_mel128
+p041,female,18-25,black or african american,53,pdaf,neutral_mel128
+p042,male,18-25,hispanic or latino,53,pdaf,neutral_mel128
+p044,female,46-55,white or caucasian,59,pdaf,neutral_mel128
+p045,female,18-25,black or african american,55,pdaf,neutral_mel128
+p046,male,26-35,white or caucasian,54,pdaf,neutral_mel128
+p047,female,56-65,white or caucasian,51,pdaf,neutral_mel128
+p048,female,56-65,white or caucasian,52,pdaf,neutral_mel128
+p049,male,36-45,white or caucasian,54,pdaf,neutral_mel128
+p050,female,56-65,white or caucasian,54,pdaf,neutral_mel128
+p051,female,46-55,white or caucasian,59,pdaf,neutral_mel128
+p052,female,18-25,black or african american,54,pdaf,neutral_mel128
+p053,female,18-25,white or caucasian,57,pdaf,neutral_mel128
+p054,male,46-55,white or caucasian,51,pdaf,neutral_mel128
+p055,female,46-55,white or caucasian,51,pdaf,neutral_mel128
+p056,female,18-25,white or caucasian,56,pdaf,neutral_mel128
+p057,male,18-25,white or caucasian,52,pdaf,neutral_mel128
+p058,female,26-35,white or caucasian,54,pdaf,neutral_mel128
+p059,female,26-35,white or caucasian,61,pdaf,neutral_mel128
+p060,male,26-35,hispanic or latino,51,pdaf,neutral_mel128
+p061,female,56-65,white or caucasian,51,pdaf,neutral_mel128
+p062,female,18-25,hispanic or latino,50,pdaf,neutral_mel128
+p063,female,36-45,white or caucasian,54,pdaf,neutral_mel128
+p064,female,36-45,white or caucasian,53,pdaf,neutral_mel128
+p065,male,56-65,white or caucasian,54,pdaf,neutral_mel128
+p066,female,46-55,white or caucasian,54,pdaf,neutral_mel128
+p067,female,18-25,asian,256,pdaf,neutral_mel128
+p068,female,18-25,hispanic or latino,51,pdaf,neutral_mel128
+p069,female,46-55,white or caucasian,55,pdaf,neutral_mel128
+p070,female,36-45,white or caucasian,59,pdaf,neutral_mel128
+p071,male,18-25,black or african american,56,pdaf,neutral_mel128
+p072,prefer not to answer,prefer not to answer,prefer not to answer,54,pdaf,neutral_mel128
+p073,female,18-25,black or african american,55,pdaf,neutral_mel128
+p074,male,18-25,white or caucasian,54,pdaf,neutral_mel128
+p075,female,18-25,black or african american,51,pdaf,neutral_mel128
+p076,male,26-35,white or caucasian,51,pdaf,neutral_mel128
+p077,male,46-55,white or caucasian,54,pdaf,neutral_mel128
+p078,prefer not to answer,18-25,white or caucasian,51,pdaf,neutral_mel128
+p079,female,46-55,white or caucasian,58,pdaf,neutral_mel128
+p080,female,26-35,black or african american,55,pdaf,neutral_mel128
+p081,male,18-25,white or caucasian,51,pdaf,neutral_mel128
+p082,female,26-35,black or african american,51,pdaf,neutral_mel128
+p083,female,26-35,black or african american,304,pdaf,neutral_mel128
+p084,female,66-75,white or caucasian,51,pdaf,neutral_mel128
+p085,male,26-35,white or caucasian,53,pdaf,neutral_mel128
+p086,male,18-25,white or caucasian,55,pdaf,neutral_mel128
+p087,male,56-65,white or caucasian,56,pdaf,neutral_mel128
+p088,male,18-25,white or caucasian,51,pdaf,neutral_mel128
+p089,female,26-35,asian,54,pdaf,neutral_mel128
+p090,male,56-65,white or caucasian,56,pdaf,neutral_mel128
+p091,male,26-35,white or caucasian,55,pdaf,neutral_mel128
+p092,female,36-45,white or caucasian,55,pdaf,neutral_mel128
+p093,female,56-65,white or caucasian,55,pdaf,neutral_mel128
+p094,male,36-45,hispanic or latino,55,pdaf,neutral_mel128
+p095,male,36-45,white or caucasian,51,pdaf,neutral_mel128
+p096,non-binary / third gender,18-25,white or caucasian,51,pdaf,neutral_mel128
+p097,male,56-65,white or caucasian,53,pdaf,neutral_mel128
+p098,female,46-55,black or african american,57,pdaf,neutral_mel128
+p099,female,46-55,black or african american,269,pdaf,neutral_mel128
+p100,female,36-45,white or caucasian,54,pdaf,neutral_mel128
+p101,male,46-55,black or african american,53,pdaf,neutral_mel128
+p102,male,26-35,white or caucasian,251,pdaf,neutral_mel128
+p103,prefer not to answer,prefer not to answer,prefer not to answer,65,pdaf,neutral_mel128
+p104,female,56-65,white or caucasian,55,pdaf,neutral_mel128
+p105,male,36-45,black or african american,58,pdaf,neutral_mel128
+p106,female,56-65,white or caucasian,55,pdaf,neutral_mel128
+p107,male,36-45,asian,54,pdaf,neutral_mel128
