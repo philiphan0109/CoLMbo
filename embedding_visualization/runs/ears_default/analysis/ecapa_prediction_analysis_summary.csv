@@ -1,0 +1,4 @@
+task,n_eval,n_correct,n_incorrect,value_accuracy,n_correct_resolved,n_incorrect_resolved,value_accuracy_resolved,missing_raw_coords,missing_mapper_coords
+age,7022,3047,3975,0.43392195955568214,3047,3975,0.43392195955568214,0,0
+ethnicity,7022,5670,1352,0.8074622614639704,5670,1352,0.8074622614639704,0,0
+gender,7022,6044,978,0.8607234406152093,6044,978,0.8607234406152093,0,0

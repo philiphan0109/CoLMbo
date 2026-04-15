@@ -30,6 +30,12 @@ The intended final review set is small:
   Reduces embeddings to 2D and generates the visualization grids.
 - `04_run_ears_pipeline.py`
   One-command runner that executes the full EARS workflow end-to-end.
+- `05_export_ears_predictions.py`
+  Exports a clean EARS-only baseline prediction table from existing batch-eval outputs.
+- `06_merge_ecapa_with_predictions.py`
+  Merges ECAPA coordinate files with baseline predictions and writes utterance/speaker analysis tables.
+- `07_plot_ecapa_prediction_errors.py`
+  Creates ECAPA error-overlay plots: points are colored by gold label and incorrect predictions are highlighted.
 - `common.py`
   Shared data/model helpers.
 
@@ -92,6 +98,30 @@ python embedding_visualization/03_plot_embedding_spaces.py \
   --pdaf-dir embedding_visualization/data/pdaf \
   --output-dir embedding_visualization/output
 ```
+
+## Baseline Error Analysis (ECAPA)
+
+If you already have a completed embedding run, you can layer the baseline predictions on top:
+
+```bash
+python embedding_visualization/05_export_ears_predictions.py
+
+python embedding_visualization/06_merge_ecapa_with_predictions.py \
+  --run-root embedding_visualization/runs/ears_default
+
+python embedding_visualization/07_plot_ecapa_prediction_errors.py \
+  --utterance-csv embedding_visualization/runs/ears_default/analysis/ecapa_prediction_analysis_utterance.csv \
+  --output-dir embedding_visualization/runs/ears_default/error_plots \
+  --reducers tsne pca
+```
+
+Main outputs:
+
+- `embedding_visualization/runs/ears_default/analysis/ears_predictions_long.csv`
+- `embedding_visualization/runs/ears_default/analysis/ecapa_prediction_analysis_utterance.csv`
+- `embedding_visualization/runs/ears_default/analysis/ecapa_prediction_analysis_speaker.csv`
+- `embedding_visualization/runs/ears_default/error_plots/tsne_utterance_error_grid.png`
+- `embedding_visualization/runs/ears_default/error_plots/pca_utterance_error_grid.png`
 
 ## Notes
 
