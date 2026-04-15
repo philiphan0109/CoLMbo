@@ -41,6 +41,11 @@ def parse_args():
         choices=list(REDUCER_CHOICES),
         help="Reducers to visualize",
     )
+    parser.add_argument(
+        "--hide-errors",
+        action="store_true",
+        help="Do not draw black outlines around incorrect predictions",
+    )
     return parser.parse_args()
 
 
@@ -51,7 +56,7 @@ def build_palette(values):
     return {label: cmap(i) for i, label in enumerate(labels)}
 
 
-def make_grid(df: pd.DataFrame, reducer: str, output_dir: Path):
+def make_grid(df: pd.DataFrame, reducer: str, output_dir: Path, show_errors: bool):
     fig, axes = plt.subplots(
         len(SPACE_ORDER),
         len(LABEL_COLUMNS),
@@ -95,7 +100,7 @@ def make_grid(df: pd.DataFrame, reducer: str, output_dir: Path):
                 )
 
             incorrect_df = plot_df[plot_df["is_incorrect_resolved"] == 1]
-            if not incorrect_df.empty:
+            if show_errors and not incorrect_df.empty:
                 ax.scatter(
                     incorrect_df[x_col],
                     incorrect_df[y_col],
@@ -119,12 +124,18 @@ def make_grid(df: pd.DataFrame, reducer: str, output_dir: Path):
 
     fig.suptitle(
         f"{reducer.upper()} Utterance-Level ECAPA Error Overlay\n"
-        "Colors = gold label, black outlines = incorrect baseline predictions",
+        +
+        (
+            "Colors = gold label, black outlines = incorrect baseline predictions"
+            if show_errors
+            else "Colors = gold label"
+        ),
         fontsize=14,
     )
     fig.tight_layout()
 
-    out_path = output_dir / f"{reducer}_utterance_error_grid.png"
+    suffix = "error_grid" if show_errors else "label_grid"
+    out_path = output_dir / f"{reducer}_utterance_{suffix}.png"
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved: {out_path}")
@@ -143,7 +154,7 @@ def main():
     df = pd.read_csv(Path(args.utterance_csv))
 
     for reducer in args.reducers:
-        make_grid(df, reducer, output_dir)
+        make_grid(df, reducer, output_dir, show_errors=not args.hide_errors)
 
 
 if __name__ == "__main__":
