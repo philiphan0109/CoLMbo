@@ -1,0 +1,6 @@
+name: colmbo
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+prefix: /home/phan07/miniconda3/envs/colmbo

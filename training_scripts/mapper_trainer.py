@@ -14,11 +14,15 @@ import torch
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from common import (
+    add_wandb_args,
+    init_wandb,
     load_config,
     load_mapper_checkpoint,
     maybe_tqdm,
     resolve_device,
     setup_local_env,
+    wandb_finish,
+    wandb_log,
 )
 
 
@@ -129,6 +133,12 @@ def build_arg_parser(default_sampling="uniform"):
         action="store_true",
         help="Use CUDA automatic mixed precision when training on CUDA.",
     )
+    parser.add_argument(
+        "--wandb-log-model",
+        action="store_true",
+        help="When --wandb is enabled, upload final and best mapper checkpoints as W&B artifacts.",
+    )
+    add_wandb_args(parser, default_job_type=f"train_mapper_{default_sampling}")
     return parser
 
 
@@ -443,6 +453,7 @@ def main(default_sampling="uniform"):
         }
     with (output_dir / "run_config.json").open("w", encoding="utf-8") as f:
         json.dump(run_summary, f, indent=2, ensure_ascii=True)
+    run = init_wandb(args, config, run_config=run_summary)
 
     log_path = output_dir / "train_log.csv"
     with log_path.open("w", encoding="utf-8", newline="") as f:
@@ -452,98 +463,124 @@ def main(default_sampling="uniform"):
         )
         writer.writeheader()
 
-    global_step = 0
-    best_loss = None
-    print(f"Training examples: {len(dataset)}")
-    print(f"Output dir:        {output_dir}")
-    print(f"Device:            {device}")
-    print(f"Sampling:          {args.sampling}")
+    try:
+        global_step = 0
+        best_loss = None
+        print(f"Training examples: {len(dataset)}")
+        print(f"Output dir:        {output_dir}")
+        print(f"Device:            {device}")
+        print(f"Sampling:          {args.sampling}")
 
-    for epoch in range(1, args.epochs + 1):
-        mapper.train()
-        epoch_loss_sum = 0.0
-        epoch_loss_count = 0
-        optimizer.zero_grad(set_to_none=True)
-        pbar = maybe_tqdm(len(dataloader), desc=f"epoch {epoch}", unit="batch")
-        started = time.time()
+        for epoch in range(1, args.epochs + 1):
+            mapper.train()
+            epoch_loss_sum = 0.0
+            epoch_loss_count = 0
+            optimizer.zero_grad(set_to_none=True)
+            pbar = maybe_tqdm(len(dataloader), desc=f"epoch {epoch}", unit="batch")
+            started = time.time()
 
-        for step, batch in enumerate(dataloader, start=1):
-            with torch.autocast(device_type=device.type, enabled=use_amp):
-                loss = mapper_lm_loss(
-                    gpt,
-                    mapper,
-                    tokenizer,
-                    batch["sid_embeddings"],
-                    batch["prompts"],
-                    batch["responses"],
-                    bool(wrapper_cfg["norm_sid_emb"]),
-                    int(wrapper_cfg["sid_prefix_length"]),
-                    gpt.transformer.wte.weight.shape[1],
-                    args.prompt_max_length,
-                    target_max_length,
-                    device,
-                )
-                scaled_loss = loss / max(1, args.gradient_accumulation_steps)
+            for step, batch in enumerate(dataloader, start=1):
+                with torch.autocast(device_type=device.type, enabled=use_amp):
+                    loss = mapper_lm_loss(
+                        gpt,
+                        mapper,
+                        tokenizer,
+                        batch["sid_embeddings"],
+                        batch["prompts"],
+                        batch["responses"],
+                        bool(wrapper_cfg["norm_sid_emb"]),
+                        int(wrapper_cfg["sid_prefix_length"]),
+                        gpt.transformer.wte.weight.shape[1],
+                        args.prompt_max_length,
+                        target_max_length,
+                        device,
+                    )
+                    scaled_loss = loss / max(1, args.gradient_accumulation_steps)
 
-            scaler.scale(scaled_loss).backward()
+                scaler.scale(scaled_loss).backward()
 
-            if step % max(1, args.gradient_accumulation_steps) == 0:
-                if args.max_grad_norm and args.max_grad_norm > 0:
-                    scaler.unscale_(optimizer)
-                    torch.nn.utils.clip_grad_norm_(mapper.parameters(), args.max_grad_norm)
-                scaler.step(optimizer)
-                scaler.update()
-                optimizer.zero_grad(set_to_none=True)
+                if step % max(1, args.gradient_accumulation_steps) == 0:
+                    if args.max_grad_norm and args.max_grad_norm > 0:
+                        scaler.unscale_(optimizer)
+                        torch.nn.utils.clip_grad_norm_(mapper.parameters(), args.max_grad_norm)
+                    scaler.step(optimizer)
+                    scaler.update()
+                    optimizer.zero_grad(set_to_none=True)
 
-            global_step += 1
-            loss_value = float(loss.detach().cpu())
-            epoch_loss_sum += loss_value
-            epoch_loss_count += 1
-            avg_loss = epoch_loss_sum / epoch_loss_count
+                global_step += 1
+                loss_value = float(loss.detach().cpu())
+                epoch_loss_sum += loss_value
+                epoch_loss_count += 1
+                avg_loss = epoch_loss_sum / epoch_loss_count
+
+                if pbar is not None:
+                    pbar.update(1)
+                    pbar.set_postfix_str(f"loss={loss_value:.4f} avg={avg_loss:.4f}")
+                elif step % max(1, args.log_every) == 0:
+                    print(
+                        f"epoch={epoch} step={step}/{len(dataloader)} "
+                        f"loss={loss_value:.4f} avg={avg_loss:.4f}"
+                    )
+
+                if step % max(1, args.log_every) == 0 or step == len(dataloader):
+                    elapsed = time.time() - started
+                    with log_path.open("a", encoding="utf-8", newline="") as f:
+                        writer = csv.DictWriter(
+                            f,
+                            fieldnames=[
+                                "epoch",
+                                "step",
+                                "global_step",
+                                "loss",
+                                "avg_epoch_loss",
+                                "elapsed_sec",
+                            ],
+                        )
+                        writer.writerow(
+                            {
+                                "epoch": epoch,
+                                "step": step,
+                                "global_step": global_step,
+                                "loss": f"{loss_value:.8f}",
+                                "avg_epoch_loss": f"{avg_loss:.8f}",
+                                "elapsed_sec": f"{elapsed:.2f}",
+                            }
+                        )
+                    wandb_log(
+                        run,
+                        {
+                            "train/loss": loss_value,
+                            "train/avg_epoch_loss_so_far": avg_loss,
+                            "train/epoch": epoch,
+                            "train/step_in_epoch": step,
+                            "train/lr": optimizer.param_groups[0]["lr"],
+                            "train/examples_seen": global_step * batch_size,
+                            "train/batches_per_sec": step / max(1e-6, elapsed),
+                        },
+                        step=global_step,
+                    )
+
+                if args.max_steps_per_epoch and step >= args.max_steps_per_epoch:
+                    break
 
             if pbar is not None:
-                pbar.update(1)
-                pbar.set_postfix_str(f"loss={loss_value:.4f} avg={avg_loss:.4f}")
-            elif step % max(1, args.log_every) == 0:
-                print(
-                    f"epoch={epoch} step={step}/{len(dataloader)} "
-                    f"loss={loss_value:.4f} avg={avg_loss:.4f}"
+                pbar.close()
+
+            epoch_avg_loss = epoch_loss_sum / max(1, epoch_loss_count)
+            if epoch % max(1, args.save_every) == 0:
+                save_checkpoint(
+                    output_dir / "checkpoints" / f"mapper_epoch_{epoch:03d}.pt",
+                    mapper,
+                    epoch,
+                    global_step,
+                    epoch_avg_loss,
+                    args,
+                    config,
                 )
-
-            if step % max(1, args.log_every) == 0 or step == len(dataloader):
-                with log_path.open("a", encoding="utf-8", newline="") as f:
-                    writer = csv.DictWriter(
-                        f,
-                        fieldnames=[
-                            "epoch",
-                            "step",
-                            "global_step",
-                            "loss",
-                            "avg_epoch_loss",
-                            "elapsed_sec",
-                        ],
-                    )
-                    writer.writerow(
-                        {
-                            "epoch": epoch,
-                            "step": step,
-                            "global_step": global_step,
-                            "loss": f"{loss_value:.8f}",
-                            "avg_epoch_loss": f"{avg_loss:.8f}",
-                            "elapsed_sec": f"{time.time() - started:.2f}",
-                        }
-                    )
-
-            if args.max_steps_per_epoch and step >= args.max_steps_per_epoch:
-                break
-
-        if pbar is not None:
-            pbar.close()
-
-        epoch_avg_loss = epoch_loss_sum / max(1, epoch_loss_count)
-        if epoch % max(1, args.save_every) == 0:
+            final_mapper_path = output_dir / "mapper_ce_llm.pt"
+            best_mapper_path = output_dir / "best_mapper_ce_llm.pt"
             save_checkpoint(
-                output_dir / "checkpoints" / f"mapper_epoch_{epoch:03d}.pt",
+                final_mapper_path,
                 mapper,
                 epoch,
                 global_step,
@@ -551,31 +588,56 @@ def main(default_sampling="uniform"):
                 args,
                 config,
             )
-        save_checkpoint(
-            output_dir / "mapper_ce_llm.pt",
-            mapper,
-            epoch,
-            global_step,
-            epoch_avg_loss,
-            args,
-            config,
-        )
-        if best_loss is None or epoch_avg_loss < best_loss:
-            best_loss = epoch_avg_loss
-            save_checkpoint(
-                output_dir / "best_mapper_ce_llm.pt",
-                mapper,
-                epoch,
-                global_step,
-                epoch_avg_loss,
-                args,
-                config,
+            if best_loss is None or epoch_avg_loss < best_loss:
+                best_loss = epoch_avg_loss
+                save_checkpoint(
+                    best_mapper_path,
+                    mapper,
+                    epoch,
+                    global_step,
+                    epoch_avg_loss,
+                    args,
+                    config,
+                )
+            wandb_log(
+                run,
+                {
+                    "train/epoch_avg_loss": epoch_avg_loss,
+                    "train/best_loss": best_loss,
+                    "train/completed_epoch": epoch,
+                },
+                step=global_step,
             )
-        print(f"epoch={epoch} avg_loss={epoch_avg_loss:.6f} best_loss={best_loss:.6f}")
+            if run is not None:
+                run.summary["best_loss"] = best_loss
+                run.summary["final_loss"] = epoch_avg_loss
+                run.summary["global_step"] = global_step
+            print(f"epoch={epoch} avg_loss={epoch_avg_loss:.6f} best_loss={best_loss:.6f}")
 
-    print(f"Final mapper: {output_dir / 'mapper_ce_llm.pt'}")
-    print(f"Best mapper:  {output_dir / 'best_mapper_ce_llm.pt'}")
-    print(f"Train log:    {log_path}")
+        final_mapper_path = output_dir / "mapper_ce_llm.pt"
+        best_mapper_path = output_dir / "best_mapper_ce_llm.pt"
+        if run is not None and args.wandb_log_model:
+            import wandb
+
+            artifact = wandb.Artifact(
+                name=f"colmbo-mapper-{args.sampling}-{run.id}",
+                type="model",
+                metadata={
+                    "sampling": args.sampling,
+                    "best_loss": best_loss,
+                    "epochs": args.epochs,
+                    "global_step": global_step,
+                },
+            )
+            artifact.add_file(str(final_mapper_path), name="mapper_ce_llm.pt")
+            artifact.add_file(str(best_mapper_path), name="best_mapper_ce_llm.pt")
+            run.log_artifact(artifact)
+
+        print(f"Final mapper: {final_mapper_path}")
+        print(f"Best mapper:  {best_mapper_path}")
+        print(f"Train log:    {log_path}")
+    finally:
+        wandb_finish(run)
 
 
 if __name__ == "__main__":

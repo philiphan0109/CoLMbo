@@ -12,12 +12,16 @@ import numpy as np
 import torch
 
 from common import (
+    add_wandb_args,
+    init_wandb,
     load_config,
     load_sid_model_from_config,
     load_waveform_for_manifest,
     maybe_tqdm,
     resolve_device,
     setup_local_env,
+    wandb_finish,
+    wandb_log,
 )
 
 
@@ -70,6 +74,7 @@ def parse_args():
         default=100,
         help="Fallback progress print interval if tqdm is unavailable",
     )
+    add_wandb_args(parser, default_job_type="precompute_ecapa")
     return parser.parse_args()
 
 
@@ -116,124 +121,163 @@ def main():
     }
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    run = init_wandb(
+        args,
+        config,
+        run_config={
+            "stage": "precompute_ecapa",
+            "examples_csv": args.examples_csv,
+            "output_dir": str(output_dir),
+            "sample_rate": sample_rate,
+            "device": str(device),
+        },
+    )
 
-    unique_audio = build_unique_audio(examples)
-    audio_items = list(unique_audio.values())
-    if args.limit_audio and args.limit_audio > 0:
-        audio_items = audio_items[: args.limit_audio]
+    try:
+        unique_audio = build_unique_audio(examples)
+        audio_items = list(unique_audio.values())
+        if args.limit_audio and args.limit_audio > 0:
+            audio_items = audio_items[: args.limit_audio]
 
-    from load_data.extract_fbanks import Mel_Spectrogram
+        from load_data.extract_fbanks import Mel_Spectrogram
 
-    extractor = Mel_Spectrogram(sample_rate=sample_rate).to(device)
-    sid_model = load_sid_model_from_config(args.config, device, args.sid_checkpoint)
+        extractor = Mel_Spectrogram(sample_rate=sample_rate).to(device)
+        sid_model = load_sid_model_from_config(args.config, device, args.sid_checkpoint)
 
-    embedding_rows = []
-    vectors = []
-    errors = []
-    embedding_id_by_audio = {}
-    pbar = maybe_tqdm(len(audio_items), desc="ECAPA precompute", unit="audio")
-    started = time.time()
+        embedding_rows = []
+        vectors = []
+        errors = []
+        embedding_id_by_audio = {}
+        pbar = maybe_tqdm(len(audio_items), desc="ECAPA precompute", unit="audio")
+        started = time.time()
 
-    with torch.no_grad():
-        for idx, item in enumerate(audio_items):
-            audio_path = item["audio_path"]
-            try:
-                waveform, _, resolved_path, method = load_waveform_for_manifest(
-                    audio_path,
-                    roots,
-                    sample_rate=sample_rate,
-                )
-                waveform = waveform.to(device)
-                features = extractor(waveform)
-                embedding = sid_model(features)
-                vector = embedding.squeeze(0).detach().cpu().numpy().astype(np.float32)
-                embedding_id = len(vectors)
-                vectors.append(vector)
-                embedding_id_by_audio[audio_path] = embedding_id
-                embedding_rows.append(
-                    {
-                        "embedding_id": embedding_id,
-                        "source_prefix": item["source_prefix"],
-                        "audio_path": audio_path,
-                        "resolved_audio_path": resolved_path,
-                        "resolution_method": method,
-                        "n_examples": item["n_examples"],
-                    }
-                )
-            except Exception as exc:
-                errors.append(
-                    {
-                        "source_prefix": item["source_prefix"],
-                        "audio_path": audio_path,
-                        "error": str(exc),
-                    }
-                )
+        with torch.no_grad():
+            for idx, item in enumerate(audio_items):
+                audio_path = item["audio_path"]
+                try:
+                    waveform, _, resolved_path, method = load_waveform_for_manifest(
+                        audio_path,
+                        roots,
+                        sample_rate=sample_rate,
+                    )
+                    waveform = waveform.to(device)
+                    features = extractor(waveform)
+                    embedding = sid_model(features)
+                    vector = embedding.squeeze(0).detach().cpu().numpy().astype(np.float32)
+                    embedding_id = len(vectors)
+                    vectors.append(vector)
+                    embedding_id_by_audio[audio_path] = embedding_id
+                    embedding_rows.append(
+                        {
+                            "embedding_id": embedding_id,
+                            "source_prefix": item["source_prefix"],
+                            "audio_path": audio_path,
+                            "resolved_audio_path": resolved_path,
+                            "resolution_method": method,
+                            "n_examples": item["n_examples"],
+                        }
+                    )
+                except Exception as exc:
+                    errors.append(
+                        {
+                            "source_prefix": item["source_prefix"],
+                            "audio_path": audio_path,
+                            "error": str(exc),
+                        }
+                    )
 
-            if pbar is not None:
-                pbar.update(1)
-            elif (idx + 1) % max(1, args.progress_every) == 0 or idx + 1 == len(audio_items):
                 elapsed = max(1e-6, time.time() - started)
-                print(
-                    f"[{idx + 1}/{len(audio_items)}] "
-                    f"ok={len(vectors)} errors={len(errors)} rate={(idx + 1) / elapsed:.2f}/s"
-                )
+                if pbar is not None:
+                    pbar.update(1)
+                    pbar.set_postfix_str(f"ok={len(vectors)} errors={len(errors)}")
+                elif (idx + 1) % max(1, args.progress_every) == 0 or idx + 1 == len(audio_items):
+                    print(
+                        f"[{idx + 1}/{len(audio_items)}] "
+                        f"ok={len(vectors)} errors={len(errors)} rate={(idx + 1) / elapsed:.2f}/s"
+                    )
+                if (idx + 1) % max(1, args.progress_every) == 0 or idx + 1 == len(audio_items):
+                    wandb_log(
+                        run,
+                        {
+                            "precompute/audio_processed": idx + 1,
+                            "precompute/audio_embedded": len(vectors),
+                            "precompute/audio_errors": len(errors),
+                            "precompute/rate_audio_per_sec": (idx + 1) / elapsed,
+                        },
+                        step=idx + 1,
+                    )
 
-    if pbar is not None:
-        pbar.close()
+        if pbar is not None:
+            pbar.close()
 
-    if not vectors:
-        raise RuntimeError("No ECAPA embeddings were computed. Check roots and audio resolution errors.")
+        if not vectors:
+            raise RuntimeError("No ECAPA embeddings were computed. Check roots and audio resolution errors.")
 
-    embeddings_path = output_dir / "audio_embeddings.npy"
-    index_path = output_dir / "audio_embedding_index.csv"
-    train_csv = output_dir / "train_examples_with_embeddings.csv"
-    errors_path = output_dir / "audio_embedding_errors.csv"
-    summary_path = output_dir / "summary.json"
+        embeddings_path = output_dir / "audio_embeddings.npy"
+        index_path = output_dir / "audio_embedding_index.csv"
+        train_csv = output_dir / "train_examples_with_embeddings.csv"
+        errors_path = output_dir / "audio_embedding_errors.csv"
+        summary_path = output_dir / "summary.json"
 
-    np.save(embeddings_path, np.vstack(vectors).astype(np.float32))
-    write_csv(index_path, embedding_rows, INDEX_FIELDS)
+        np.save(embeddings_path, np.vstack(vectors).astype(np.float32))
+        write_csv(index_path, embedding_rows, INDEX_FIELDS)
 
-    train_rows = []
-    fieldnames = list(examples[0].keys())
-    if EXAMPLE_FIELD_EXTRA not in fieldnames:
-        fieldnames.append(EXAMPLE_FIELD_EXTRA)
-    for row in examples:
-        embedding_id = embedding_id_by_audio.get(row["audio_path"])
-        if embedding_id is None:
-            continue
-        out = dict(row)
-        out[EXAMPLE_FIELD_EXTRA] = embedding_id
-        train_rows.append(out)
-    write_csv(train_csv, train_rows, fieldnames)
+        train_rows = []
+        fieldnames = list(examples[0].keys())
+        if EXAMPLE_FIELD_EXTRA not in fieldnames:
+            fieldnames.append(EXAMPLE_FIELD_EXTRA)
+        for row in examples:
+            embedding_id = embedding_id_by_audio.get(row["audio_path"])
+            if embedding_id is None:
+                continue
+            out = dict(row)
+            out[EXAMPLE_FIELD_EXTRA] = embedding_id
+            train_rows.append(out)
+        write_csv(train_csv, train_rows, fieldnames)
 
-    if errors:
-        write_csv(errors_path, errors, ["source_prefix", "audio_path", "error"])
+        if errors:
+            write_csv(errors_path, errors, ["source_prefix", "audio_path", "error"])
 
-    summary = {
-        "examples_csv": str(args.examples_csv),
-        "output_dir": str(output_dir),
-        "n_input_examples": len(examples),
-        "n_unique_audio_requested": len(audio_items),
-        "n_unique_audio_embedded": len(vectors),
-        "n_audio_errors": len(errors),
-        "n_training_examples_with_embeddings": len(train_rows),
-        "embeddings_path": str(embeddings_path),
-        "index_path": str(index_path),
-        "train_csv": str(train_csv),
-        "errors_path": str(errors_path) if errors else "",
-        "device": str(device),
-    }
-    with summary_path.open("w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2, ensure_ascii=True)
+        summary = {
+            "examples_csv": str(args.examples_csv),
+            "output_dir": str(output_dir),
+            "n_input_examples": len(examples),
+            "n_unique_audio_requested": len(audio_items),
+            "n_unique_audio_embedded": len(vectors),
+            "n_audio_errors": len(errors),
+            "n_training_examples_with_embeddings": len(train_rows),
+            "embeddings_path": str(embeddings_path),
+            "index_path": str(index_path),
+            "train_csv": str(train_csv),
+            "errors_path": str(errors_path) if errors else "",
+            "device": str(device),
+        }
+        with summary_path.open("w", encoding="utf-8") as f:
+            json.dump(summary, f, indent=2, ensure_ascii=True)
 
-    print(f"Embeddings:     {embeddings_path}")
-    print(f"Index CSV:      {index_path}")
-    print(f"Training CSV:   {train_csv}")
-    print(f"Embedded audio: {len(vectors)} / {len(audio_items)}")
-    print(f"Training rows:  {len(train_rows)} / {len(examples)}")
-    if errors:
-        print(f"Errors CSV:     {errors_path}")
-    print(f"Device used:    {device}")
+        wandb_log(
+            run,
+            {
+                "precompute/n_input_examples": len(examples),
+                "precompute/n_unique_audio_requested": len(audio_items),
+                "precompute/n_unique_audio_embedded": len(vectors),
+                "precompute/n_audio_errors": len(errors),
+                "precompute/n_training_examples_with_embeddings": len(train_rows),
+            },
+        )
+        if run is not None:
+            run.summary.update(summary)
+
+        print(f"Embeddings:     {embeddings_path}")
+        print(f"Index CSV:      {index_path}")
+        print(f"Training CSV:   {train_csv}")
+        print(f"Embedded audio: {len(vectors)} / {len(audio_items)}")
+        print(f"Training rows:  {len(train_rows)} / {len(examples)}")
+        if errors:
+            print(f"Errors CSV:     {errors_path}")
+        print(f"Device used:    {device}")
+    finally:
+        wandb_finish(run)
 
 
 if __name__ == "__main__":

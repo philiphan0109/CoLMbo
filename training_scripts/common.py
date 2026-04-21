@@ -63,9 +63,101 @@ def setup_local_env():
     os.environ.setdefault("TRANSFORMERS_CACHE", str(REPO_ROOT / ".hf_home" / "transformers"))
     os.environ.setdefault("NUMBA_CACHE_DIR", str(REPO_ROOT / ".numba_cache"))
     os.environ.setdefault("NUMBA_DISABLE_JIT", "1")
+    os.environ.setdefault("WANDB_DIR", str(REPO_ROOT / ".wandb"))
+    os.environ.setdefault("WANDB_DATA_DIR", str(REPO_ROOT / ".wandb" / "data"))
+    os.environ.setdefault("WANDB_CACHE_DIR", str(REPO_ROOT / ".wandb" / "cache"))
     Path(os.environ["HUGGINGFACE_HUB_CACHE"]).mkdir(parents=True, exist_ok=True)
     Path(os.environ["TRANSFORMERS_CACHE"]).mkdir(parents=True, exist_ok=True)
     Path(os.environ["NUMBA_CACHE_DIR"]).mkdir(parents=True, exist_ok=True)
+    Path(os.environ["WANDB_DIR"]).mkdir(parents=True, exist_ok=True)
+    Path(os.environ["WANDB_DATA_DIR"]).mkdir(parents=True, exist_ok=True)
+    Path(os.environ["WANDB_CACHE_DIR"]).mkdir(parents=True, exist_ok=True)
+
+
+def add_wandb_args(parser, default_job_type=None):
+    group = parser.add_argument_group("wandb")
+    group.add_argument(
+        "--wandb",
+        action="store_true",
+        help="Enable Weights & Biases logging for this run.",
+    )
+    group.add_argument(
+        "--wandb-project",
+        default=None,
+        help="W&B project. Defaults to config wandb.project or 'explainability'.",
+    )
+    group.add_argument("--wandb-entity", default=None, help="Optional W&B entity/team.")
+    group.add_argument("--wandb-run-name", default=None, help="Optional W&B run name.")
+    group.add_argument("--wandb-group", default=None, help="Optional W&B run group.")
+    group.add_argument(
+        "--wandb-job-type",
+        default=default_job_type,
+        help="Optional W&B job type.",
+    )
+    group.add_argument(
+        "--wandb-tags",
+        nargs="*",
+        default=None,
+        help="Optional W&B tags separated by spaces.",
+    )
+    group.add_argument(
+        "--wandb-mode",
+        choices=["online", "offline", "disabled"],
+        default=None,
+        help="Optional W&B mode. Use offline if the machine cannot reach wandb.ai.",
+    )
+    return parser
+
+
+def _wandb_project_from_config(config):
+    if isinstance(config, dict):
+        wandb_cfg = config.get("wandb") or {}
+        if isinstance(wandb_cfg, dict) and wandb_cfg.get("project"):
+            return wandb_cfg["project"]
+    return "explainability"
+
+
+def init_wandb(args, config=None, run_config=None):
+    if not getattr(args, "wandb", False):
+        return None
+    try:
+        import wandb
+    except ImportError as exc:
+        raise RuntimeError(
+            "W&B logging was requested with --wandb, but wandb is not installed. "
+            "Install it in the active environment with: pip install wandb"
+        ) from exc
+
+    project = getattr(args, "wandb_project", None) or _wandb_project_from_config(config)
+    merged_config = {}
+    if run_config:
+        merged_config.update(run_config)
+    merged_config["cli_args"] = vars(args)
+
+    init_kwargs = {
+        "project": project,
+        "config": merged_config,
+    }
+    optional_kwargs = {
+        "entity": getattr(args, "wandb_entity", None),
+        "name": getattr(args, "wandb_run_name", None),
+        "group": getattr(args, "wandb_group", None),
+        "job_type": getattr(args, "wandb_job_type", None),
+        "tags": getattr(args, "wandb_tags", None),
+        "mode": getattr(args, "wandb_mode", None),
+    }
+    init_kwargs.update({key: value for key, value in optional_kwargs.items() if value})
+    return wandb.init(**init_kwargs)
+
+
+def wandb_log(run, data, step=None):
+    if run is not None:
+        run.log(data, step=step)
+
+
+def wandb_finish(run):
+    if run is not None:
+        run.finish()
 
 
 def load_config(config_path):

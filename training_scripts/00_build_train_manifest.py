@@ -10,11 +10,15 @@ from pathlib import Path
 from common import (
     SOURCE_TASKS,
     TASKS,
+    add_wandb_args,
     collect_task_values,
+    init_wandb,
     iter_expanded_examples,
     iter_manifest,
     resolve_audio_reference,
     setup_local_env,
+    wandb_finish,
+    wandb_log,
 )
 
 
@@ -84,6 +88,7 @@ def parse_args():
         default=0,
         help="Optional cap on raw TEARS rows to scan after source filtering (0 = all).",
     )
+    add_wandb_args(parser, default_job_type="build_train_manifest")
     return parser.parse_args()
 
 
@@ -133,92 +138,119 @@ def maybe_download_manifest(raw_manifest, dataset_id, split):
 def main():
     setup_local_env()
     args = parse_args()
+    run = init_wandb(
+        args,
+        run_config={
+            "stage": "build_train_manifest",
+            "raw_manifest": args.raw_manifest,
+            "output": args.output,
+            "tasks": args.tasks,
+            "sources": args.sources,
+            "check_audio": args.check_audio,
+        },
+    )
     raw_manifest = Path(args.raw_manifest)
-    if args.download:
-        maybe_download_manifest(raw_manifest, args.hf_dataset, args.split)
-    if not raw_manifest.exists():
-        raise FileNotFoundError(
-            f"Missing raw manifest: {raw_manifest}. "
-            "Pass --download or create it with baseline_scripts/00_fetch_tears_manifest.py."
-        )
+    try:
+        if args.download:
+            maybe_download_manifest(raw_manifest, args.hf_dataset, args.split)
+        if not raw_manifest.exists():
+            raise FileNotFoundError(
+                f"Missing raw manifest: {raw_manifest}. "
+                "Pass --download or create it with baseline_scripts/00_fetch_tears_manifest.py."
+            )
 
-    output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    roots = {
-        "ears_dataset_processed": Path(args.ears_root) if args.ears_root else None,
-        "timit_dataset": Path(args.timit_root) if args.timit_root else None,
-    }
-    wanted_sources = set(args.sources)
-    task_values = collect_task_values(raw_manifest)
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        roots = {
+            "ears_dataset_processed": Path(args.ears_root) if args.ears_root else None,
+            "timit_dataset": Path(args.timit_root) if args.timit_root else None,
+        }
+        wanted_sources = set(args.sources)
+        task_values = collect_task_values(raw_manifest)
 
-    rows_scanned = 0
-    examples_written = 0
-    skipped_unresolved = Counter()
-    source_counts = Counter()
-    task_counts = Counter()
-    label_counts = Counter()
+        rows_scanned = 0
+        examples_written = 0
+        skipped_unresolved = Counter()
+        source_counts = Counter()
+        task_counts = Counter()
+        label_counts = Counter()
 
-    with output.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-        writer.writeheader()
+        with output.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+            writer.writeheader()
 
-        for raw_row in iter_manifest(raw_manifest):
-            audio_path = raw_row.get("audio_path")
-            source = str(audio_path).split("/")[0] if audio_path else ""
-            if source not in wanted_sources:
-                continue
-            if args.max_rows and rows_scanned >= args.max_rows:
-                break
-            rows_scanned += 1
-
-            resolved_path = ""
-            resolution_method = ""
-            if args.check_audio:
-                resolved, method = resolve_audio_reference(audio_path, roots)
-                if resolved is None:
-                    skipped_unresolved[(source, method)] += 1
+            for raw_row in iter_manifest(raw_manifest):
+                audio_path = raw_row.get("audio_path")
+                source = str(audio_path).split("/")[0] if audio_path else ""
+                if source not in wanted_sources:
                     continue
-                resolved_path = str(resolved)
-                resolution_method = method
+                if args.max_rows and rows_scanned >= args.max_rows:
+                    break
+                rows_scanned += 1
 
-            for example in iter_expanded_examples(raw_row, args.tasks, task_values):
-                example["example_id"] = examples_written
-                example["resolved_audio_path"] = resolved_path
-                example["resolution_method"] = resolution_method
-                writer.writerow({field: example.get(field, "") for field in FIELDNAMES})
-                examples_written += 1
-                source_counts[example["source_prefix"]] += 1
-                task_counts[example["task"]] += 1
-                label_counts[(example["task"], example["label"])] += 1
+                resolved_path = ""
+                resolution_method = ""
+                if args.check_audio:
+                    resolved, method = resolve_audio_reference(audio_path, roots)
+                    if resolved is None:
+                        skipped_unresolved[(source, method)] += 1
+                        continue
+                    resolved_path = str(resolved)
+                    resolution_method = method
 
-    summary = {
-        "raw_manifest": str(raw_manifest),
-        "output": str(output),
-        "rows_scanned": rows_scanned,
-        "examples_written": examples_written,
-        "source_counts": dict(source_counts),
-        "task_counts": dict(task_counts),
-        "task_label_counts": {
-            f"{task}::{label}": count for (task, label), count in sorted(label_counts.items())
-        },
-        "skipped_unresolved_audio": {
-            f"{source}::{reason}": count for (source, reason), count in sorted(skipped_unresolved.items())
-        },
-    }
-    summary_path = output.with_suffix(".summary.json")
-    with summary_path.open("w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2, ensure_ascii=True)
+                for example in iter_expanded_examples(raw_row, args.tasks, task_values):
+                    example["example_id"] = examples_written
+                    example["resolved_audio_path"] = resolved_path
+                    example["resolution_method"] = resolution_method
+                    writer.writerow({field: example.get(field, "") for field in FIELDNAMES})
+                    examples_written += 1
+                    source_counts[example["source_prefix"]] += 1
+                    task_counts[example["task"]] += 1
+                    label_counts[(example["task"], example["label"])] += 1
 
-    print(f"Wrote expanded manifest: {output}")
-    print(f"Wrote summary:           {summary_path}")
-    print(f"Raw rows scanned:        {rows_scanned}")
-    print(f"Examples written:        {examples_written}")
-    for task, count in sorted(task_counts.items()):
-        print(f"  {task}: {count}")
-    if skipped_unresolved:
-        print("Skipped unresolved audio:")
-        for key, count in sorted(skipped_unresolved.items()):
-            print(f"  {key}: {count}")
+        summary = {
+            "raw_manifest": str(raw_manifest),
+            "output": str(output),
+            "rows_scanned": rows_scanned,
+            "examples_written": examples_written,
+            "source_counts": dict(source_counts),
+            "task_counts": dict(task_counts),
+            "task_label_counts": {
+                f"{task}::{label}": count for (task, label), count in sorted(label_counts.items())
+            },
+            "skipped_unresolved_audio": {
+                f"{source}::{reason}": count for (source, reason), count in sorted(skipped_unresolved.items())
+            },
+        }
+        summary_path = output.with_suffix(".summary.json")
+        with summary_path.open("w", encoding="utf-8") as f:
+            json.dump(summary, f, indent=2, ensure_ascii=True)
+
+        wandb_log(
+            run,
+            {
+                "manifest/rows_scanned": rows_scanned,
+                "manifest/examples_written": examples_written,
+                "manifest/skipped_unresolved_audio": sum(skipped_unresolved.values()),
+                **{f"manifest/task_count/{task}": count for task, count in task_counts.items()},
+                **{f"manifest/source_count/{src}": count for src, count in source_counts.items()},
+            },
+        )
+        if run is not None:
+            run.summary.update(summary)
+
+        print(f"Wrote expanded manifest: {output}")
+        print(f"Wrote summary:           {summary_path}")
+        print(f"Raw rows scanned:        {rows_scanned}")
+        print(f"Examples written:        {examples_written}")
+        for task, count in sorted(task_counts.items()):
+            print(f"  {task}: {count}")
+        if skipped_unresolved:
+            print("Skipped unresolved audio:")
+            for key, count in sorted(skipped_unresolved.items()):
+                print(f"  {key}: {count}")
+    finally:
+        wandb_finish(run)
 
 
 if __name__ == "__main__":

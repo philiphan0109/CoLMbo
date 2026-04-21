@@ -1,0 +1,40 @@
+{
+  "raw_manifest": "baseline_scripts/data/tears_train_manifest.jsonl",
+  "output": "training_scripts/data/train_examples_ears_timit.csv",
+  "rows_scanned": 34828,
+  "examples_written": 102787,
+  "source_counts": {
+    "timit_dataset": 18890,
+    "ears_dataset_processed": 83897
+  },
+  "task_counts": {
+    "gender": 33732,
+    "age": 34227,
+    "dialect": 6300,
+    "ethnicity": 28528
+  },
+  "task_label_counts": {
+    "age::18-25": 9872,
+    "age::26-35": 9183,
+    "age::36-45": 5249,
+    "age::46-55": 5205,
+    "age::56-65": 4171,
+    "age::66-75": 547,
+    "dialect::Army Brat (moved around)": 330,
+    "dialect::New England": 490,
+    "dialect::New York City": 460,
+    "dialect::North Midland": 1020,
+    "dialect::Northern": 1020,
+    "dialect::South Midland": 1000,
+    "dialect::Southern": 980,
+    "dialect::Western": 1000,
+    "ethnicity::asian": 1044,
+    "ethnicity::black or african american": 4931,
+    "ethnicity::hispanic or latino": 2370,
+    "ethnicity::prefer not to answer": 591,
+    "ethnicity::white or caucasian": 19592,
+    "gender::female": 18014,
+    "gender::male": 15718
+  },
+  "skipped_unresolved_audio": {}
+}

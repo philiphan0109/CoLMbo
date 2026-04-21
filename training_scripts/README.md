@@ -18,6 +18,14 @@ ls checkpoints checkpoint_mlp_mapper
 nvidia-smi
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 python -c "import transformers, pandas, numpy, torchaudio; print('ok')"
+python -c "import wandb; print(wandb.__version__)"
+```
+
+If W&B is missing:
+
+```bash
+pip install wandb
+wandb login
 ```
 
 ## Build Training Examples
@@ -31,7 +39,9 @@ python training_scripts/00_build_train_manifest.py \
   --output training_scripts/data/train_examples_ears_timit.csv \
   --ears-root tears_audio \
   --timit-root timit_root \
-  --check-audio
+  --check-audio \
+  --wandb \
+  --wandb-run-name build-train-manifest-ears-timit
 ```
 
 If `baseline_scripts/data/tears_train_manifest.jsonl` already exists, omit `--download`.
@@ -42,7 +52,9 @@ If `baseline_scripts/data/tears_train_manifest.jsonl` already exists, omit `--do
 python training_scripts/01_precompute_ecapa_embeddings.py \
   --examples-csv training_scripts/data/train_examples_ears_timit.csv \
   --output-dir training_scripts/data/ears_timit_ecapa_cache \
-  --device cuda
+  --device cuda \
+  --wandb \
+  --wandb-run-name ecapa-cache-ears-timit
 ```
 
 Smoke test:
@@ -64,7 +76,9 @@ python training_scripts/02_train_mapper_baseline.py \
   --output-dir training_scripts/runs/mapper_uniform_20ep \
   --epochs 20 \
   --batch-size 64 \
-  --device cuda
+  --device cuda \
+  --wandb \
+  --wandb-run-name mapper-uniform-20ep
 ```
 
 For a fast smoke run:
@@ -78,7 +92,9 @@ python training_scripts/02_train_mapper_baseline.py \
   --limit-examples 256 \
   --max-steps-per-epoch 10 \
   --batch-size 16 \
-  --device cuda
+  --device cuda \
+  --wandb \
+  --wandb-run-name mapper-uniform-smoke
 ```
 
 ## Train Weighted Variant
@@ -91,7 +107,9 @@ python training_scripts/03_train_mapper_weighted.py \
   --epochs 20 \
   --batch-size 64 \
   --weight-alpha 0.5 \
-  --device cuda
+  --device cuda \
+  --wandb \
+  --wandb-run-name mapper-weighted-20ep
 ```
 
 Optional hard-example multiplier from existing EARS baseline predictions:
@@ -106,7 +124,9 @@ python training_scripts/03_train_mapper_weighted.py \
   --weight-alpha 0.5 \
   --hard-predictions baseline_scripts/data/ears_full_sharded/predictions_all.csv \
   --hard-weight 2.0 \
-  --device cuda
+  --device cuda \
+  --wandb \
+  --wandb-run-name mapper-weighted-hard-20ep
 ```
 
 ## Evaluate
@@ -121,7 +141,9 @@ python training_scripts/04_eval_trained_mapper.py \
   --mapper-checkpoint checkpoint_mlp_mapper/mapper_ce_llm.pt \
   --tasks gender age ethnicity dialect \
   --max-samples-per-group 0 \
-  --output-dir training_scripts/runs/eval_pretrained_ears_timit
+  --output-dir training_scripts/runs/eval_pretrained_ears_timit \
+  --wandb \
+  --wandb-run-name eval-pretrained-ears-timit
 ```
 
 Evaluate a fine-tuned mapper:
@@ -134,7 +156,30 @@ python training_scripts/04_eval_trained_mapper.py \
   --mapper-checkpoint training_scripts/runs/mapper_weighted_20ep/best_mapper_ce_llm.pt \
   --tasks gender age ethnicity dialect \
   --max-samples-per-group 0 \
-  --output-dir training_scripts/runs/eval_weighted_20ep
+  --output-dir training_scripts/runs/eval_weighted_20ep \
+  --wandb \
+  --wandb-run-name eval-weighted-20ep
 ```
 
 The main comparison rows are `source_prefix == OVERALL` for each task and the `MACRO_AVG` row in each `summary.csv`.
+
+## W&B Options
+
+All training-pipeline scripts accept:
+
+```bash
+--wandb
+--wandb-project explainability
+--wandb-run-name my-run-name
+--wandb-group colmbo-weighted-comparison
+--wandb-tags baseline weighted tears-timit
+--wandb-mode online
+```
+
+Use `--wandb-mode offline` if the machine cannot reach W&B during the run. Sync later with:
+
+```bash
+wandb sync wandb/offline-run-*
+```
+
+Training logs loss, epoch loss, best loss, learning rate, throughput, and run config. Evaluation logs the summary metric table plus per-task value accuracy, balanced value accuracy, exact match, extraction rate, and output CSV artifacts.

@@ -1,0 +1,17 @@
+{
+  "examples_csv": "training_scripts/data/ears_timit_ecapa_cache/train_examples_with_embeddings.csv",
+  "embeddings_npy": "training_scripts/data/ears_timit_ecapa_cache/audio_embeddings.npy",
+  "output_dir": "training_scripts/runs/mapper_uniform_50ep",
+  "n_examples": 102787,
+  "sampling": "uniform",
+  "weight_alpha": 0.5,
+  "hard_predictions": "",
+  "hard_weight": 2.0,
+  "epochs": 50,
+  "batch_size": 64,
+  "lr": 0.0001,
+  "weight_decay": 1e-06,
+  "prompt_max_length": 10,
+  "target_max_length": 80,
+  "device": "cuda:0"
+}
