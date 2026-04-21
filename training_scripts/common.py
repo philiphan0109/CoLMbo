@@ -280,6 +280,13 @@ def source_prefix(audio_path):
     return str(audio_path).split("/")[0] if audio_path else ""
 
 
+def source_internal_split(audio_path):
+    parts = str(audio_path).split("/")
+    if len(parts) > 1 and parts[0] in SOURCE_TASKS:
+        return parts[1].lower()
+    return ""
+
+
 def extract_speaker_id(audio_path):
     for part in str(audio_path).split("/"):
         if SPEAKER_RE.match(part):

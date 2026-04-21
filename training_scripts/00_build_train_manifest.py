@@ -16,6 +16,7 @@ from common import (
     iter_expanded_examples,
     iter_manifest,
     resolve_audio_reference,
+    source_internal_split,
     setup_local_env,
     wandb_finish,
     wandb_log,
@@ -76,6 +77,16 @@ def parse_args():
         default=list(SOURCE_TASKS.keys()),
         choices=list(SOURCE_TASKS.keys()),
         help="TEARS audio_path source prefixes to include",
+    )
+    parser.add_argument(
+        "--source-splits",
+        nargs="+",
+        default=["train"],
+        help=(
+            "Internal source dataset splits to include from audio_path. "
+            "Default is train only, which avoids leaking EARS val/test or TIMIT test "
+            "audio into mapper training."
+        ),
     )
     parser.add_argument(
         "--check-audio",
@@ -146,6 +157,7 @@ def main():
             "output": args.output,
             "tasks": args.tasks,
             "sources": args.sources,
+            "source_splits": args.source_splits,
             "check_audio": args.check_audio,
         },
     )
@@ -166,6 +178,7 @@ def main():
             "timit_dataset": Path(args.timit_root) if args.timit_root else None,
         }
         wanted_sources = set(args.sources)
+        wanted_source_splits = {str(split).lower() for split in args.source_splits}
         task_values = collect_task_values(raw_manifest)
 
         rows_scanned = 0
@@ -183,6 +196,9 @@ def main():
                 audio_path = raw_row.get("audio_path")
                 source = str(audio_path).split("/")[0] if audio_path else ""
                 if source not in wanted_sources:
+                    continue
+                internal_split = source_internal_split(audio_path)
+                if wanted_source_splits and internal_split not in wanted_source_splits:
                     continue
                 if args.max_rows and rows_scanned >= args.max_rows:
                     break
@@ -211,6 +227,7 @@ def main():
         summary = {
             "raw_manifest": str(raw_manifest),
             "output": str(output),
+            "source_splits": sorted(wanted_source_splits),
             "rows_scanned": rows_scanned,
             "examples_written": examples_written,
             "source_counts": dict(source_counts),

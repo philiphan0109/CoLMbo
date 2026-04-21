@@ -39,12 +39,18 @@ python training_scripts/00_build_train_manifest.py \
   --output training_scripts/data/train_examples_ears_timit.csv \
   --ears-root tears_audio \
   --timit-root timit_root \
+  --source-splits train \
   --check-audio \
   --wandb \
   --wandb-run-name build-train-manifest-ears-timit
 ```
 
 If `baseline_scripts/data/tears_train_manifest.jsonl` already exists, omit `--download`.
+
+`--source-splits train` is intentional. The HuggingFace TEARS `train` split can include
+source-internal EARS `val`/`test` and TIMIT `test` audio paths, which overlap the TEARS
+test manifest. Training should use only source-internal `train` paths for the baseline
+comparison.
 
 ## Cache ECAPA Embeddings
 
