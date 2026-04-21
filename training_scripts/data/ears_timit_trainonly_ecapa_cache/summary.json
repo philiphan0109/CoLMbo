@@ -1,0 +1,14 @@
+{
+  "examples_csv": "training_scripts/data/train_examples_ears_timit_trainonly.csv",
+  "output_dir": "training_scripts/data/ears_timit_trainonly_ecapa_cache",
+  "n_input_examples": 77021,
+  "n_unique_audio_requested": 26126,
+  "n_unique_audio_embedded": 26126,
+  "n_audio_errors": 0,
+  "n_training_examples_with_embeddings": 77021,
+  "embeddings_path": "training_scripts/data/ears_timit_trainonly_ecapa_cache/audio_embeddings.npy",
+  "index_path": "training_scripts/data/ears_timit_trainonly_ecapa_cache/audio_embedding_index.csv",
+  "train_csv": "training_scripts/data/ears_timit_trainonly_ecapa_cache/train_examples_with_embeddings.csv",
+  "errors_path": "",
+  "device": "cuda:0"
+}
