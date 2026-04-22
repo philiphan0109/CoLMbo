@@ -1,0 +1,12 @@
+task,source_prefix,n_selected,n_eval,n_inference_failed,n_audio_unresolved,n_value_available,n_value_pred,n_value_correct,exact_match_accuracy,value_accuracy,balanced_value_accuracy,value_extraction_rate
+age,ears_dataset_processed,200,200,0,0,200,200,186,0.655,0.93,0.9133762613841316,1.0
+age,timit_dataset,200,200,0,0,200,200,83,0.195,0.415,0.19171428571428573,1.0
+dialect,timit_dataset,200,200,0,0,200,200,31,0.08,0.155,0.15505050505050505,1.0
+ethnicity,ears_dataset_processed,200,200,0,0,200,200,186,0.645,0.93,0.9462201927955353,1.0
+gender,ears_dataset_processed,200,200,0,0,200,200,197,0.28,0.985,0.9837633166474137,1.0
+gender,timit_dataset,200,200,0,0,200,200,199,0.43,0.995,0.9964285714285714,1.0
+age,OVERALL,400,400,0,0,400,400,269,0.425,0.6725,0.4287060572277964,1.0
+dialect,OVERALL,200,200,0,0,200,200,31,0.08,0.155,0.15505050505050505,1.0
+ethnicity,OVERALL,200,200,0,0,200,200,186,0.645,0.93,0.9462201927955353,1.0
+gender,OVERALL,400,400,0,0,400,400,396,0.355,0.99,0.9899877349753448,1.0
+MACRO_AVG,OVERALL,1200,1200,0,0,1200,1200,882,0.37625,0.686875,0.6299911225122954,1.0
